@@ -105,7 +105,7 @@ window.onload = function() {
 		  	   this.x = x;
 		  	   this.y = y;
 		  }
-   }
+   });
 
 	// Start Screen
 	var StartScreen = Class.create(Scene, {
