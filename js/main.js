@@ -81,7 +81,7 @@ window.onload = function() {
 
 			// Create event listeners to listen for mouse clicks on buttons
 			// startButton.addEventListener(Event.TOUCH_START, this.playGame);
-			// controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
+			controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
 		},
 
 		// Loads the first level if Start button is clicked
@@ -105,7 +105,7 @@ window.onload = function() {
 
 		initialize: function() {
 
-			var game, bg, backButton;
+			var game, bg, backButton, wasd, mouse, spacebar;
 
 			// Get an instance of the Game object to reference
 			game = Game.instance;
@@ -119,18 +119,35 @@ window.onload = function() {
 
 			// Create Back button to go back to start screen
 			// (needs to be filled in with images and set size)
-			//backButton = new Sprite();
-			//backButton.image = game.assets[];
+			backButton = new Sprite(96, 40);
+			backButton.image = game.assets['res/images/back_button.png'];
+			backButton.x = 100;
+			backButton.y = 500;
 
-			// Create images for button controls
-			//controls = new Sprite();
-			//controls.image = game.assets[];
+			// Create images for button controls - WASD keys
+			wasd = new Sprite(325, 220);
+			wasd.image = game.assets['res/images/wasd.png'];
+			wasd.x = 100;
+			wasd.y = 125;
+
+			// Create image for mouse click to fire
+			mouse = new Sprite(130, 400);
+			mouse.image = game.assets['res/images/mouse.png'];
+			mouse.x = 550;
+
+			// Create image for space bar to fire
+			spacebar = new Sprite(225, 55);
+			spacebar.image = game.assets['res/images/spacebar.png'];
+			spacebar.x = 300;
+			spacebar.y = 400;
 
 			this.addChild(bg);
-			// this.addChild(backButton);
-			// this.addChild(controls);
+			this.addChild(backButton);
+			this.addChild(wasd);
+			this.addChild(mouse);
+			this.addChild(spacebar)
 
-			// backButton.addEventListener(Event.TOUCH_START, this.goBack);
+			backButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
 
 		goBack: function(evt) {
