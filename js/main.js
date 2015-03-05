@@ -39,41 +39,47 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game;
+			var game, player;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
 			//get an instance of the game
 			game = Game.instance;
+			//refference to current player
+			player = this;
 
 			//initialize player velocity and acceleration (used for momentum)
 			this.vx = 0;
 			this.vy = 0;
 			this.ax = 0;
 			this.ay = 0;
+
+			this.image = game.assets['res/images/idle.png'];
+
 			this.addEventListener('enterframe', function(e){
 
 				//defining friction of the player with the ground
-				var friction = 0;
-				if(this.vx > 0.3) {
-					friction = -0.3;
+				var friction_x = 0;
+				var friction_y = 0;
+				if(this.vx > 0.2) {
+					friction_x = -0.2;
 				} else if(this.vx > 0){
-					friction = -this.vx;
+					friction_x = -this.vx;
 				}
-				if(this.vx < -0.3){
-					friction = 0.3;
+				if(this.vx < -0.2){
+					friction_x = 0.2;
 				} else if(this.vx < 0 ){
-					fricition = -this.vx;
+					friction_x = -this.vx;
 				}
-				if(this.vy > 0.3) {
-					friction = -0.3;
+				if(this.vy > 0.2) {
+					friction_y = -0.2;
 				} else if(this.vy > 0){
-					friction = -this.vx;
+					friction_y = -this.vy;
 				}
-				if(this.vy < -0.3){
-					friction = 0.3;
+				if(this.vy < -0.2){
+					friction_y = 0.2;
 				} else if(this.vy < 0 ){
-					friction = -this.vx;
+					friction_y = -this.vy;
 				}
 
 				this.ax = 0;
@@ -82,18 +88,48 @@ window.onload = function() {
 				//checking the input of the user
 				if (game.input.left) this.ax -= 0.5;
             	if (game.input.right) this.ax += 0.5;
-            	if (game.input.up) this.ax -= 0.5;
-            	if (game.input.down) this.ax += 0.5;
-
-            	this.vx += this.ax + friction;
-            	this.vy += this.ay + friction; 
+            	if (game.input.up) this.ay -= 0.5;
+            	if (game.input.down) this.ay += 0.5;
+            	this.vx += this.ax + friction_x;
+            	this.vy += this.ay + friction_y; 
             	this.vx = Math.min(Math.max(this.vx, -10), 10);
             	this.vy = Math.min(Math.max(this.vy, -10), 10);
 
             	this.x += this.vx;
             	this.y += this.vy;
+
+            	document.onmousemove = handleMouseMove;
+    			function handleMouseMove(event) {
+        			var dot, eventDoc, doc, body, pageX, pageY;
+
+        			event = event || window.event; // IE-ism
+
+			        // If pageX/Y aren't available and clientX/Y are,
+			        // calculate pageX/Y - logic taken from jQuery.
+			        // (This is to support old IE)
+			        if (event.pageX == null && event.clientX != null) {
+			            eventDoc = (event.target && event.target.ownerDocument) || document;
+			            doc = eventDoc.documentElement;
+			            body = eventDoc.body;
+
+			            event.pageX = event.clientX +
+			              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+			              (doc && doc.clientLeft || body && body.clientLeft || 0);
+			            event.pageY = event.clientY +
+			              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+			              (doc && doc.clientTop  || body && body.clientTop  || 0 );
+			        }
+
+        			// Use event.pageX / event.pageY here
+        			console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
+        			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
+        			angle = angle * (180/Math.PI);
+
+        			player.rotation = 90 + angle;
+    			}
 			});
-		}
+		},
+
 	});
 
 	/**
@@ -238,7 +274,7 @@ window.onload = function() {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, i;
+		    var game, bg, enemies, i, player;
 		    var enemySpawnSec = 2000; // ms
 
 		    game = Game.instance;
@@ -249,8 +285,15 @@ window.onload = function() {
 		    enemies = new Group();
 		    this.enemies = enemies;
 
+		    //create a new player
+		    player = new Player();
+		    player.x = 40;
+		    player.y = 40;
+
+
 		    this.addChild(bg);
 		    this.addChild(enemies);	
+		    this.addChild(player);
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
