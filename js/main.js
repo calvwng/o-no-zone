@@ -36,6 +36,77 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
+	//spaceship player Class
+	var Player = Class.create(Sprite, {
+		initialize: function(){
+			var game;
+			//get an instance of the game
+			game = Game.instance;
+
+			//initialize player velocity and acceleration (used for momentum)
+			this.vx = 0;
+			this.vy = 0;
+			this.ax = 0;
+			this.ay = 0;
+			this.addEventListener('enterframe', function(e){
+
+				//defining friction of the player with the ground
+				var friction = 0;
+				if(this.vx > 0.3) {
+					friction = -0.3;
+				} else if(this.vx > 0){
+					friction = -this.vx;
+				}
+				if(this.vx < -0.3){
+					friction = 0.3;
+				} else if(this.vx < 0 ){
+					fricition = -this.vx;
+				}
+				if(this.vy > 0.3) {
+					friction = -0.3;
+				} else if(this.vy > 0){
+					friction = -this.vx;
+				}
+				if(this.vy < -0.3){
+					friction = 0.3;
+				} else if(this.vy < 0 ){
+					friction = -this.vx;
+				}
+
+				this.ax = 0;
+				this.ay = 0;
+
+				//checking the input of the user
+				if (game.input.left) this.ax -= 0.5;
+            	if (game.input.right) this.ax += 0.5;
+            	if (game.input.up) this.ax -= 0.5;
+            	if (game.input.down) this.ax += 0.5;
+
+            	this.vx += this.ax + friction;
+            	this.vy += this.ay + friction; 
+            	this.vx = Math.min(Math.max(this.vx, -10), 10);
+            	this.vy = Math.min(Math.max(this.vy, -10), 10);
+
+            	this.x += this.vx;
+            	this.y += this.vy;
+			});
+		}
+	});
+
+	/**
+	* SpinnerEnemy class
+	*/
+	var SpinnerEnemy = Class.create(Sprite, {
+		  initialize: function(x, y) {
+		  	   Sprite.apply(this, [98, 84]);
+
+		  	   var game = Game.instance;
+		  	   this.image = game.assets['res/images/Spaceship-Drakir6.png'];
+		  	   this.x = x;
+		  	   this.y = y;
+		  }
+   });
+
 	// Start Screen
 	var StartScreen = Class.create(Scene, {
 
@@ -80,7 +151,11 @@ window.onload = function() {
 			this.addChild(controlsButton);
 
 			// Create event listeners to listen for mouse clicks on buttons
+<<<<<<< HEAD
 			// startButton.addEventListener(Event.TOUCH_START, this.playGame);
+=======
+			startButton.addEventListener(Event.TOUCH_START, this.playGame);
+>>>>>>> FETCH_HEAD
 			controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
 		},
 
@@ -105,7 +180,11 @@ window.onload = function() {
 
 		initialize: function() {
 
+<<<<<<< HEAD
 			var game, bg, backButton, wasd, mouse, spacebar;
+=======
+			var game, bg, backButton, wasdImage, mouseImage, spacebarImage;
+>>>>>>> FETCH_HEAD
 
 			// Get an instance of the Game object to reference
 			game = Game.instance;
@@ -118,6 +197,7 @@ window.onload = function() {
 			bg.image = game.assets['res/images/background.png'];
 
 			// Create Back button to go back to start screen
+<<<<<<< HEAD
 			// (needs to be filled in with images and set size)
 			backButton = new Sprite(96, 40);
 			backButton.image = game.assets['res/images/back_button.png'];
@@ -146,6 +226,22 @@ window.onload = function() {
 			this.addChild(wasd);
 			this.addChild(mouse);
 			this.addChild(spacebar)
+=======
+			backButton = new Sprite(95, 39);
+			backButton.image = game.assets['res/images/back_button.png'];
+			backButton.x = 150;
+			backButton.y = 450;
+
+			wasdImage = new Sprite(550, 359);
+			wasdImage.image = game.assets['res/images/wasd.png'];
+			wasdImage.scale(0.75, 0.75);
+			wasdImage.x = 50;
+			wasdImage.y = 100;
+
+			this.addChild(bg);
+			this.addChild(backButton);
+			this.addChild(wasdImage);
+>>>>>>> FETCH_HEAD
 
 			backButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
@@ -158,10 +254,37 @@ window.onload = function() {
 
 	});
 
+	/**
+	* Level 1 Game Logic
+	*/
 	var Level1 = Class.create (Scene, {
+		initialize: function() {
+		    Scene.apply(this);
 
-		// Fill in game logic here
-	})
+		    var game, bg, enemies, i;
+		    var enemySpawnSec = 2000; // ms
+
+		    game = Game.instance;
+
+		    bg = new Sprite(800, 600);
+		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+
+		    enemies = new Group();
+		    this.enemies = enemies;
+
+		    this.addChild(bg);
+		    this.addChild(enemies);	
+
+		    this.tl.setTimeBased();
+		    this.addEventListener(Event.ENTER_FRAME, this.update);
+		},
+
+		update: function() {
+			this.tl.delay(2000).then(function() {
+				console.log("2000 ms interval tick.")
+			});
+		}
+	});
 
 	// Game Over Screen
 	var GameOverScreen = Class.create(Scene, {
