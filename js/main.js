@@ -107,6 +107,8 @@ window.onload = function() {
 		  	   this.image = game.assets['res/images/Spaceship-Drakir6.png'];
 		  	   this.x = x;
 		  	   this.y = y;
+
+		  	   this.addEventListener()
 		  }
    });
 
@@ -239,8 +241,9 @@ window.onload = function() {
 		    Scene.apply(this);
 
 		    var game, bg, enemies, i;
-		    var enemySpawnSec = 2000; // ms
+		    var maxSpinners = 10;
 
+		    this.maxSpinners = maxSpinners;
 		    game = Game.instance;
 
 		    bg = new Sprite(800, 600);
@@ -257,8 +260,16 @@ window.onload = function() {
 		},
 
 		update: function() {
-			this.tl.delay(2000).then(function() {
-				console.log("2000 ms interval tick.")
+			//-- Spawn SpinnerEnemy every 1000 ms
+			this.tl.delay(1000).then(function() {
+				// Limit enemies on screen to 10
+				if (this.enemies.childNodes.length < 10) {
+					var enemyX = Math.floor(Math.random() * 800);
+					var enemyY = Math.floor(Math.random() * 600);
+					this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
+				}
+
+				// console.log("1000 ms interval tick.")
 			});
 		}
 	});
