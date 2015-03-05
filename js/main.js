@@ -11,7 +11,7 @@ window.onload = function() {
 	// uncomment preload line and file with images and sounds with the following format
 	// 'folder/image.png' or 'folder/sound.wav'. Just add commas to load multiples
 	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png',
-				 'res/images/cell.jpg', 'res/images/chad_price.png', 'res/images/controls_button.png',
+				 'res/images/cell.jpg', 'res/images/chad_price_grin.png', 'res/images/controls_button.png',
 				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.jpg',
 				 'res/images/earthsorbit.jpg', 'res/images/game_over.png', 'res/images/globalwarming.jpg',
 				 'res/images/gold-ball.png', 'res/images/hp_bar.png', 'res/images/idle.png', 'res/images/logo.png',
@@ -51,7 +51,7 @@ window.onload = function() {
 
 			// Set background to image, set size to same as game size
 			bg = new Sprite(800, 600);
-			bg.image = game.assets[/* Fill in with bg image */]
+			bg.image = game.assets['res/images/background.png']
 
 			// Create Start button and controls buttons to go to new screens
 			// (needs to be filled in with images and set size)
@@ -64,13 +64,13 @@ window.onload = function() {
 
 			// Add everything to the scene
 			this.addChild(bg);
-			this.addChild(logo);
-			this.addChild(startButton);
-			this.addChild(controlsButton);
+			// this.addChild(logo);
+			// this.addChild(startButton);
+			// this.addChild(controlsButton);
 
 			// Create event listeners to listen for mouse clicks on buttons
-			startButton.addEventListener(Event.TOUCH_START, this.playGame);
-			controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
+			// startButton.addEventListener(Event.TOUCH_START, this.playGame);
+			// controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
 		},
 
 		// Loads the first level if Start button is clicked
@@ -78,7 +78,7 @@ window.onload = function() {
 
 			var game = Game.instance;
 			game.replaceScene(new Level1());
-		}
+		},
 
 		// Loads the Controls screen if Controls button is clicked
 		getControls: function(evt) {
@@ -104,7 +104,7 @@ window.onload = function() {
 
 			// Set background to image, set size to same as game size
 			bg = new Sprite(800, 600);
-			bg.image = game.assets[/* Fill in with bg image */]
+			bg.image = game.assets['res/images/background.png'];
 
 			// Create Back button to go back to start screen
 			// (needs to be filled in with images and set size)
@@ -116,10 +116,10 @@ window.onload = function() {
 			//controls.image = game.assets[];
 
 			this.addChild(bg);
-			this.addChild(backButton);
-			this.addChild(controls);
+			// this.addChild(backButton);
+			// this.addChild(controls);
 
-			backButton.addEventListener(Event.TOUCH_START, this.goBack);
+			// backButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
 
 		goBack: function(evt) {
@@ -150,7 +150,7 @@ window.onload = function() {
 
 			// Set background to image, set size to same as game size
 			bg = new Sprite(800, 600);
-			bg.image = game.assets[/* Fill in with bg image */]
+			bg.image = game.assets['res/images/game_over.png'];
 
 			// Create Restart button to go back to level 1
 			// (needs to be filled in with images and set size)
@@ -167,19 +167,19 @@ window.onload = function() {
 			//logo.image = game.assets[];
 
 			this.addChild(bg);
-			this.addChild(logo);
-			this.addChild(restartButton);
-			this.addChild(backButton);
+			// this.addChild(logo);
+			// this.addChild(restartButton);
+			// this.addChild(backButton);
 
-			restartButton.addEventListener(Event.TOUCH_START, this.restartGame);
-			backButton.addEventListener(Event.TOUCH_START, this.goBack);
+			// restartButton.addEventListener(Event.TOUCH_START, this.restartGame);
+			// backButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
 
 		restartGame: function (evt) {
 
 			var game = Game.instance;
 			game.replaceScene(new Level1());
-		}
+		},
 
 		goBack: function (evt) {
 
@@ -204,7 +204,7 @@ window.onload = function() {
 
 			// Set background to image, set size to same as game size
 			bg = new Sprite(800, 600);
-			bg.image = game.assets[/* Fill in with bg image */]
+			bg.image = game.assets['res/images/winning.png'];
 
 			// Create Main Menu button to go back to start screen
 			// (needs to be filled in with images and set size)
@@ -217,10 +217,10 @@ window.onload = function() {
 			//logo.image = game.assets[];
 
 			this.addChild(bg);
-			this.addChild(logo);
-			this.addChild(menuButton);
+			// this.addChild(logo);
+			// this.addChild(menuButton);
 
-			menuButton.addEventListener(Event.TOUCH_START, this.goBack);
+			// menuButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
 
 		goBack: function (evt) {
