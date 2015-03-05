@@ -36,6 +36,17 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
+	var SpinnerEnemy = Class.create(Sprite, {
+		  initialize: function(x, y) {
+		  	   Sprite.apply(this, [98, 84]);
+
+		  	   var game = Game.instance;
+		  	   this.image = game.assets['res/images/Spaceship-Drakir6.png'];
+		  	   this.x = x;
+		  	   this.y = y;
+		  }
+	})
+
 	// Start Screen
 	var StartScreen = Class.create(Scene, {
 
@@ -144,10 +155,37 @@ window.onload = function() {
 
 	});
 
+	/**
+	* Level 1 Game Logic
+	*/
 	var Level1 = Class.create (Scene, {
+		initialize: function() {
+		    Scene.apply(this);
 
-		// Fill in game logic here
-	})
+		    var game, bg, enemies, i;
+		    var enemySpawnSec = 2000; // ms
+
+		    game = Game.instance;
+
+		    bg = new Sprite(800, 600);
+		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+
+		    enemies = new Group();
+		    this.enemies = enemies;
+
+		    this.addChild(bg);
+		    this.addChild(enemies);	
+
+		    this.tl.setTimeBased();
+		    this.addEventListener(Event.ENTER_FRAME, this.update);
+		},
+
+		update: function() {
+			this.tl.delay(2000).then(function() {
+				console.log("2000 ms interval tick.")
+			});
+		}
+	});
 
 	// Game Over Screen
 	var GameOverScreen = Class.create(Scene, {
