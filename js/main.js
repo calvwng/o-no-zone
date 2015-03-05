@@ -40,6 +40,9 @@ window.onload = function() {
 	var Player = Class.create(Sprite, {
 		initialize: function(){
 			var game;
+
+			// 1 - Call superclass constructor
+            Sprite.apply(this,[50, 56]);
 			//get an instance of the game
 			game = Game.instance;
 
@@ -143,6 +146,7 @@ window.onload = function() {
 			controlsButton.image = game.assets['res/images/controls_button.png'];
 			controlsButton.x = 480;
 			controlsButton.y = 400;
+
 
 			// Add everything to the scene
 			this.addChild(bg);
