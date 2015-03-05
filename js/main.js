@@ -10,7 +10,17 @@ window.onload = function() {
 
 	// uncomment preload line and file with images and sounds with the following format
 	// 'folder/image.png' or 'folder/sound.wav'. Just add commas to load multiples
-	//game.preload('images/bg.png');
+	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png',
+				 'res/images/cell.jpg', 'res/images/chad_price.png', 'res/images/controls_button.png',
+				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.jpg',
+				 'res/images/earthsorbit.jpg', 'res/images/game_over.png', 'res/images/globalwarming.jpg',
+				 'res/images/gold-ball.png', 'res/images/hp_bar.png', 'res/images/idle.png', 'res/images/logo.png',
+				 'res/images/man01.png', 'res/images/mouse.png', 'res/images/portrait_hit.png', 'res/images/portrait_idle.png',
+				 'res/images/portrait_nearDeath.png', 'res/images/restart_button.png', 'res/images/space_bg.jpeg',
+				 'res/images/space_bg2.jpeg', 'res/images/space_bg3.jpeg', 'res/images/spacebar.png',
+				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
+				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
+				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3');
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
