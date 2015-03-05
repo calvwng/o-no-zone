@@ -39,7 +39,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game;
+			var game, health;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -260,7 +260,7 @@ window.onload = function() {
 			this.tl.delay(2000).then(function() {
 				console.log("2000 ms interval tick.")
 			});
-		}
+		},
 	});
 
 	// Game Over Screen
