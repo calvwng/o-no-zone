@@ -40,6 +40,7 @@ window.onload = function() {
 	var StartScreen = Class.create(Scene, {
 
 		initialize: function() {
+			var gameWidth = 800, gameHeight = 600;
 
 			var game, bg, logo, startButton, controlsButton;
 
@@ -50,23 +51,33 @@ window.onload = function() {
 			Scene.apply(this);
 
 			// Set background to image, set size to same as game size
-			bg = new Sprite(800, 600);
+			bg = new Sprite(gameWidth, gameHeight);
 			bg.image = game.assets['res/images/background.png']
 
 			// Create Start button and controls buttons to go to new screens
 			// (needs to be filled in with images and set size)
-			//startButton = new Sprite();
-			//startButton.image = game.assets[];
+			startButton = new Sprite(165, 39);
+			startButton.image = game.assets['res/images/start_button.png'];
+			startButton.x = 200;
+			startButton.y = 400;
 
 			// Create logo image
-			//logo = new Sprite();
-			//logo.image = game.assets[];
+			logo = new Sprite(511, 174);
+			logo.image = game.assets['res/images/logo.png'];
+			logo.x = 150;
+			logo.y = 200;
+
+			// Create controls button
+			controlsButton = new Sprite(137, 39);
+			controlsButton.image = game.assets['res/images/controls_button.png'];
+			controlsButton.x = 480;
+			controlsButton.y = 400;
 
 			// Add everything to the scene
 			this.addChild(bg);
-			// this.addChild(logo);
-			// this.addChild(startButton);
-			// this.addChild(controlsButton);
+			this.addChild(logo);
+			this.addChild(startButton);
+			this.addChild(controlsButton);
 
 			// Create event listeners to listen for mouse clicks on buttons
 			// startButton.addEventListener(Event.TOUCH_START, this.playGame);
