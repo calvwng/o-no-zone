@@ -26,6 +26,14 @@ window.onload = function() {
 	// Basic game settings, feel free to change.
 	game.fps = 30;
 	game.scale = 1;
+	
+   // JavaScript keycode bindings
+   game.keybind(87, 'up');    // W
+   game.keybind(65, 'left');  // A
+   game.keybind(83, 'down');  // S
+   game.keybind(68, 'right'); // D
+    game.keybind(17, 'a');     // CTRL
+   game.keybind(16, 'b');     // SHIFT IN	
 
 	// Starts when game is loaded
 	game.onload = function() {
