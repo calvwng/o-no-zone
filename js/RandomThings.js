@@ -20,9 +20,16 @@ var Player = enchant.Class.create(enchant.Sprite, {
 var Enemy = enchant.Class.create(enchant.Sprite, {
    initialize: function() {
       enchant.Sprite.call(this, 98, 84); //current size of the enemy, can be changed
-      this.image = game.assets["Spaceship-Drakir6.png" //current sprite for the enemy
+      this.image = game.assets["Spaceship-Drakir6.png"]; //current sprite for the enemy
       this.moveTo(Math.floor(Math.random() * 500),
        Math.floor(Math.random() * 500)); //spawn the enemy at a random location
       game.rootScene.addChild(this); //add the player to the rootscene when the constructor is called
    }
 });
+
+var Bullet = enchant.Class.create(enchant.Sprite, {
+   initialize: function() {
+      enchant.Sprite.call(this, 46, 96);
+      this.image = game.assets["beams_2.png"];
+   }
+}
