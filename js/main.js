@@ -376,5 +376,13 @@ window.onload = function() {
          this.addChild(winText1);
          this.addChild(winText2);
       }
-   });  
+   }); 
+
+   //bullet class
+   var Bullet = enchant.Class.create(enchant.Sprite, {
+      initialize: function() {
+         enchant.Sprite.call(this, 46, 96);
+         this.image = game.assets["beams_2.png"];
+      }
+   });
 }
