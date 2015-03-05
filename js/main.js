@@ -36,6 +36,63 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
+	//spaceship player Class
+	var Player = Class.create(Sprite, {
+		initialize: function(){
+			var game;
+			//get an instance of the game
+			game = Game.instance;
+
+			//initialize player velocity and acceleration (used for momentum)
+			this.vx = 0;
+			this.vy = 0;
+			this.ax = 0;
+			this.ay = 0;
+			this.addEventListener('enterframe', function(e){
+
+				//defining friction of the player with the ground
+				var friction = 0;
+				if(this.vx > 0.3) {
+					friction = -0.3;
+				} else if(this.vx > 0){
+					friction = -this.vx;
+				}
+				if(this.vx < -0.3){
+					friction = 0.3;
+				} else if(this.vx < 0 ){
+					fricition = -this.vx;
+				}
+				if(this.vy > 0.3) {
+					friction = -0.3;
+				} else if(this.vy > 0){
+					friction = -this.vx;
+				}
+				if(this.vy < -0.3){
+					friction = 0.3;
+				} else if(this.vy < 0 ){
+					friction = -this.vx;
+				}
+
+				this.ax = 0;
+				this.ay = 0;
+
+				//checking the input of the user
+				if (game.input.left) this.ax -= 0.5;
+            	if (game.input.right) this.ax += 0.5;
+            	if (game.input.up) this.ax -= 0.5;
+            	if (game.input.down) this.ax += 0.5;
+
+            	this.vx += this.ax + friction;
+            	this.vy += this.ay + friction; 
+            	this.vx = Math.min(Math.max(this.vx, -10), 10);
+            	this.vy = Math.min(Math.max(this.vy, -10), 10);
+
+            	this.x += this.vx;
+            	this.y += this.vy;
+			});
+		}
+	})
+
 	// Start Screen
 	var StartScreen = Class.create(Scene, {
 
