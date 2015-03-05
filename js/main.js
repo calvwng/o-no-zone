@@ -20,7 +20,8 @@ window.onload = function() {
 				 'res/images/space_bg2.jpeg', 'res/images/space_bg3.jpeg', 'res/images/spacebar.png',
 				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
 				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
-				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3');
+				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "./res/images/winning.png", "./res/images/game_over.png", 
+                                 "./res/images/restart_button.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -264,98 +265,61 @@ window.onload = function() {
 	});
 
 	// Game Over Screen
-	var GameOverScreen = Class.create(Scene, {
+   var GameOverScene = Class.create(Scene, {
+      initialize: function() {
+         Scene.apply(this);
+         
+         var gameOverImage = new Sprite(537, 174);
+         gameOverImage.image = game.assets["./res/images/game_over.png"];
+         gameOverImage.x = 125;
+         gameOverImage.y = 100;
+         
+         var restartButton = new Sprite(119, 39);
+         restartButton.image = game.assets["./res/images/restart_button.png"];
+         restartButton.x = 345;
+         restartButton.y = 325;
+         this.addEventListener("touchstart", function() {
+             game.replaceScene(new Level1());
+         });
 
-		initialize: function() {
-
-			var game, bg, logo, restartButton, backButton;
-
-			// Get an instance of the Game object to reference
-			game = Game.instance;
-
-			// Call super constructor
-			Scene.apply(this);
-
-			// Set background to image, set size to same as game size
-			bg = new Sprite(800, 600);
-			bg.image = game.assets['res/images/game_over.png'];
-
-			// Create Restart button to go back to level 1
-			// (needs to be filled in with images and set size)
-			//restartButton = new Sprite();
-			//restartButton.image = game.assets[];
-
-			// Create Back button to go back to start screen
-			// (needs to be filled in with images and set size)
-			//backButton = new Sprite();
-			//backButton.image = game.assets[];
-
-			// Create image for Game Over logo
-			//logo = new Sprite();
-			//logo.image = game.assets[];
-
-			this.addChild(bg);
-			// this.addChild(logo);
-			// this.addChild(restartButton);
-			// this.addChild(backButton);
-
-			// restartButton.addEventListener(Event.TOUCH_START, this.restartGame);
-			// backButton.addEventListener(Event.TOUCH_START, this.goBack);
-		},
-
-		restartGame: function (evt) {
-
-			var game = Game.instance;
-			game.replaceScene(new Level1());
-		},
-
-		goBack: function (evt) {
-
-			var game = Game.instance;
-			game.replaceScene(new StartScreen());
-		}
-
-	});
-
+         this.backgroundColor = "black";
+ 
+         this.addChild(restartButton);
+         this.addChild(gameOverImage);
+      }
+   }); 
 	// Winning Screen
-	var WinningScreen = Class.create(Scene, {
+   var WinningScene = Class.create(Scene, {
+      initialize: function() {
+         Scene.apply(this);
+         
+         var youWinImage = new Sprite(422, 174);
+         youWinImage.image = game.assets["./res/images/winning.png"];
+         youWinImage.x = 175;
+         youWinImage.y = 25;
 
-		initialize: function() {
+         var finalScore = new Label("Final Score: " + score);
+         finalScore.color = "#0f0";
+         finalScore.x = 300;
+         finalScore.y = 250;
+         finalScore.font = "30px sans-serif";
 
-			var game, bg, logo, menuButton;
-
-			// Get an instance of the Game object to reference
-			game = Game.instance;
-
-			// Call super constructor
-			Scene.apply(this);
-
-			// Set background to image, set size to same as game size
-			bg = new Sprite(800, 600);
-			bg.image = game.assets['res/images/winning.png'];
-
-			// Create Main Menu button to go back to start screen
-			// (needs to be filled in with images and set size)
-			//menuButton = new Sprite();
-			//menuButton.image = game.assets[];
+         var winText1 = new Label("The Harvesters have been defeated...");
+         var winText2 = new Label("life on Earth will continue to press on!");
+         winText1.color = winText2.color = "#0f0";
+         winText1.x = 125;
+         winText1.y = 400;
+         winText1.font = winText2.font = "16px sans-serif";
+         winText2.x = 394;
+         winText2.y = 400;
 
 
-			// Create image for You Win logo
-			//logo = new Sprite();
-			//logo.image = game.assets[];
+         this.backgroundColor = "black";
 
-			this.addChild(bg);
-			// this.addChild(logo);
-			// this.addChild(menuButton);
-
-			// menuButton.addEventListener(Event.TOUCH_START, this.goBack);
-		},
-
-		goBack: function (evt) {
-
-			var game = Game.instance;
-			game.replaceScene(new StartScreen());
-		}
-
-	});
+         this.addChild(youWinImage);
+         this.addChild(finalScore);
+         this.addChild(winText1);
+         this.addChild(winText2);
+      }
+   });  
 }
