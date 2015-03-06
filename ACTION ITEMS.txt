@@ -17,7 +17,6 @@ Stray debris animation for background
 Ozone cloud animation
 
 	Calvin
-Pause Button
 Enemy Movement
 Bullet Spawn
 Bullet Travel in Direction of Click

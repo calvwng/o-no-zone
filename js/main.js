@@ -130,7 +130,7 @@ window.onload = function() {
 			        }
 
         			// Use event.pageX / event.pageY here
-        			console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
+        			// console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
         			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
         			angle = angle * (180/Math.PI);
 
@@ -288,6 +288,8 @@ window.onload = function() {
 		    var game, bg, enemies, i, player;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
+          var pauseLabel;
+          this.paused = false;
 
 		    this.maxSpinners = maxSpinners;
 		    game = Game.instance;
@@ -303,6 +305,14 @@ window.onload = function() {
 		    player.x = 40;
 		    player.y = 40;
 
+          // Create the pause label
+          pauseLabel = new Label('PAUSED');
+          pauseLabel.x = 250;
+          pauseLabel.y = 250;
+          pauseLabel.color = 'red';
+          pauseLabel.font = 'bold 32px sans-serif';
+          pauseLabel.textAlign = 'center';
+          this.pauseLabel = pauseLabel;              
 
 		    this.addChild(bg);
 		    this.addChild(enemies);	
@@ -310,6 +320,7 @@ window.onload = function() {
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
+          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
 		},
 
 		update: function() {
@@ -324,8 +335,23 @@ window.onload = function() {
 
 				// console.log("1000 ms interval tick.")
 			});
-		}
-	});
+		},
+
+      // Currently bound to 'SHIFT' key, for pausing
+      bHandler: function(evt) {
+       var game = Game.instance;
+
+       if (this.paused == true) {
+          game.resume();
+          this.removeChild(this.pauseLabel);        
+       }
+       else {
+          game.pause();
+          this.addChild(this.pauseLabel);
+       }
+       this.paused = !this.paused;
+      },      
+   });
 
 	// Game Over Screen
    var GameOverScene = Class.create(Scene, {
