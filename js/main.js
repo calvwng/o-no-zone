@@ -3,7 +3,6 @@ enchant();
  
 // Starts when window is loaded
 window.onload = function() {
-   var mouseX, mouseY;
 
 	// Create game and set size.
 	// Feel free to change, just make sure to change background images sizes in each screen to match
@@ -27,14 +26,6 @@ window.onload = function() {
 	// Basic game settings, feel free to change.
 	game.fps = 30;
 	game.scale = 1;
-	
-   // JavaScript keycode bindings
-   game.keybind(87, 'up');    // W
-   game.keybind(65, 'left');  // A
-   game.keybind(83, 'down');  // S
-   game.keybind(68, 'right'); // D
-    game.keybind(17, 'a');     // CTRL
-   game.keybind(16, 'b');     // SHIFT IN	
 
 	// Starts when game is loaded
 	game.onload = function() {
@@ -45,26 +36,6 @@ window.onload = function() {
 
 	// Start the game
 	game.start();
-
-	//turret class that players can move, have all other turrets inherit this class
-	var Turret = Class.create(Sprite, {
-		initialize: function() {
-			var game, turret;
-
-			Sprite.apply(this,);
-
-			game= Game.instance;
-
-			turret = this;
-
-			this.addEventListener('touchstart', this.selected);
-
-		} ,
-
-		selected: function(e){
-			
-		}
-	});
 
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
@@ -130,7 +101,6 @@ window.onload = function() {
             	this.y += this.vy;
 
             	document.onmousemove = handleMouseMove;
-
     			function handleMouseMove(event) {
         			var dot, eventDoc, doc, body, pageX, pageY;
 
@@ -159,36 +129,6 @@ window.onload = function() {
 
         			player.rotation = 90 + angle;
     			}
-
-       			function handleMouseMove(event) {
-           			var dot, eventDoc, doc, body, pageX, pageY;
-
-           			event = event || window.event; // IE-ism
-
-   			        // If pageX/Y aren't available and clientX/Y are,
-   			        // calculate pageX/Y - logic taken from jQuery.
-   			        if (event.pageX == null && event.clientX != null) {
-   			            eventDoc = (event.target && event.target.ownerDocument) || document;
-   			            doc = eventDoc.documentElement;
-   			            body = eventDoc.body;
-
-   			            event.pageX = event.clientX +
-   			              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-   			              (doc && doc.clientLeft || body && body.clientLeft || 0);
-   			            event.pageY = event.clientY +
-   			              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-   			              (doc && doc.clientTop  || body && body.clientTop  || 0 );
-   			        }
-           			// console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
-
-                  mouseX = event.pageX;
-                  mouseY = event.pageY;
-
-           			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
-           			angle = angle * (180/Math.PI);
-
-           			player.rotation = 90 + angle;
-       			}
 			});
 		},
 
@@ -201,23 +141,13 @@ window.onload = function() {
 		  initialize: function(x, y) {
 		  	   Sprite.apply(this, [98, 84]);
 
-            this.targetX;
-            this.targetY;
-
 		  	   var game = Game.instance;
 		  	   this.image = game.assets['res/images/Spaceship-Drakir6.png'];
 		  	   this.x = x;
 		  	   this.y = y;
 
-		  	   this.addEventListener(Event.ENTER_FRAME, this.update);
-		  },
-
-        update: function() {
-            this.targetX = Math.floor(Math.random() * 800);
-            this.targetY = Math.floor(Math.random() * 600);
-
-            this.tl.moveTo(this.targetX, this.targetY, 200);
-        }
+		  	   this.addEventListener()
+		  }
    });
 
 	// Start Screen
@@ -348,13 +278,10 @@ window.onload = function() {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, i, player;
+		    var game, bg, enemies, i, player;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
 		    var healthbar, hudbar;
-
-          var pauseLabel;
-          this.paused = false;
 
 		    this.maxSpinners = maxSpinners;
 		    game = Game.instance;
@@ -364,9 +291,6 @@ window.onload = function() {
 
 		    enemies = new Group();
 		    this.enemies = enemies;
-
-          bullets = new Group();
-          this.bullets = bullets;
 
 		    //create a new player
 		    player = new Player();
@@ -379,19 +303,7 @@ window.onload = function() {
 		    hudbar.x = 0;
 		    hudbar.y = 450;
 
-          this.player = player;
-
-          // Create the pause label
-          pauseLabel = new Label('PAUSED');
-          pauseLabel.x = 250;
-          pauseLabel.y = 250;
-          pauseLabel.color = 'red';
-          pauseLabel.font = 'bold 32px sans-serif';
-          pauseLabel.textAlign = 'center';
-          this.pauseLabel = pauseLabel;              
-
 		    this.addChild(bg);
-          this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
 		    this.addChild(hudbar);
@@ -404,7 +316,6 @@ window.onload = function() {
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
-
 		    // health positioning is kinda janky, also for now just on an event listener
 		    this.addEventListener(Event.TOUCH_END, function() {
 
@@ -440,9 +351,6 @@ window.onload = function() {
 					context.fillRect(155, 507, 0, 28);
 				}
 			});
-
-          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
-          this.addEventListener(Event.TOUCH_START, this.touchHandler);
 		},
 
 		update: function() {
@@ -459,34 +367,6 @@ window.onload = function() {
 			});
 		},
 	});
-
-      // Currently bound to 'SHIFT' key, for pausing
-      bHandler: function(evt) {
-          var game = Game.instance;
-
-          if (this.paused == true) {
-             game.resume();
-             this.removeChild(this.pauseLabel);        
-          }
-          else {
-             game.pause();
-             this.addChild(this.pauseLabel);
-          }
-          this.paused = !this.paused;
-      },      
-
-      touchHandler: function(evt) {
-         // If not paused && mouse is within game bounds
-         if (!this.paused && evt.x < 800 && evt.y < 600) {
-            // Spawn a bullet moving in line towards mouse
-            var bullet = new Bullet(this.player.x, this.player.y, mouseX, mouseY);
-            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
-            var degrees = (radians/Math.PI) * 180;
-            bullet.rotation = degrees + 90;     
-            this.bullets.addChild(bullet);
-         }
-      }
-   });
 
 	// Game Over Screen
    var GameOverScene = Class.create(Scene, {
@@ -545,51 +425,5 @@ window.onload = function() {
          this.addChild(winText1);
          this.addChild(winText2);
       }
-   }); 
-
-   //bullet class
-   var Bullet = enchant.Class.create(enchant.Sprite, {
-      initialize: function(x, y, targetX, targetY) {
-         enchant.Sprite.call(this, 46, 69);
-         this.image = game.assets["res/images/beams_2.png"];
-
-         this.speed = 10; // horizontal speed
-         this.x = x;
-         this.y = y;
-         this.targetX = targetX;
-         this.targetY = targetY;
-         this.m = (targetY - this.y) / (targetX - this.x);
-         this.b = targetY - this.m * targetX;
-         // console.log("y = " + this.m + " * x " + this.b);
-
-         var x2 = Math.pow(targetX - this.x, 2);
-         var y2 = Math.pow(targetY - this.y, 2);
-         var dist = Math.sqrt(x2 + y2);
-
-         this.lateralDirection;
-         if (this.x < this.targetX) {
-            this.lateralDirection = "right";
-         }
-         else {
-            this.lateralDirection = "left";
-         }
-
-         this.addEventListener(Event.ENTER_FRAME, this.update);
-      },
-
-      update: function() {
-         // Travel along calculated line and remove when out of bounds
-         if (this.lateralDirection == "right") {
-            this.x += this.speed;
-         }
-         else {
-            this.x -= this.speed;
-         }
-         this.y = this.m * this.x + this.b;
-         // Remove from "bullets" group when out of bounds + buffer
-         if (this.x < 0 || this.x > 820 || this.y < 0 || this.y > 620) {
-            this.parentNode.removeChild(this);
-         }
-      }
-   });
+   });  
 }
