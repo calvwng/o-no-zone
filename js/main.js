@@ -40,11 +40,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-<<<<<<< HEAD
-			var game, health;
-=======
-			var game, player;
->>>>>>> FETCH_HEAD
+			var game, player, health;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -52,6 +48,7 @@ window.onload = function() {
 			game = Game.instance;
 			//refference to current player
 			player = this;
+			health = 100;
 
 			//initialize player velocity and acceleration (used for momentum)
 			this.vx = 0;
@@ -126,7 +123,7 @@ window.onload = function() {
 			        }
 
         			// Use event.pageX / event.pageY here
-        			console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
+        			//console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
         			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
         			angle = angle * (180/Math.PI);
 
@@ -284,6 +281,7 @@ window.onload = function() {
 		    var game, bg, enemies, i, player;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
+		    var healthbar, hudbar;
 
 		    this.maxSpinners = maxSpinners;
 		    game = Game.instance;
@@ -298,14 +296,61 @@ window.onload = function() {
 		    player = new Player();
 		    player.x = 40;
 		    player.y = 40;
+		    player.health = 100;
 
+		    hudbar = new Sprite(300, 100);
+		    hudbar.image = game.assets['res/images/portrait_idle.png'];
+		    hudbar.x = 0;
+		    hudbar.y = 450;
 
 		    this.addChild(bg);
 		    this.addChild(enemies);	
 		    this.addChild(player);
+		    this.addChild(hudbar);
+
+		    // draw healthbar
+		    healthbar = document.getElementById("canvas");
+		    var context = canvas.getContext('2d');
+		    context.fillStyle = "Green";
+		    context.fillRect(155, 507, 120, 28);
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
+		    // health positioning is kinda janky, also for now just on an event listener
+		    this.addEventListener(Event.TOUCH_END, function() {
+
+		    	player.health -= 10;
+
+				// Clear the canvas
+				canvas.width = canvas.width;
+
+				// Calculate health
+				var percent = player.health/100;
+
+				context.fillStyle = "black";
+				context.fillRect(155, 507, 120, 28);
+
+				if (percent > 0.5) {
+
+					context.fillStyle = "Green";
+				}
+				else if (percent > 0.3) {
+
+					context.fillStyle = "Yellow";
+				}
+				else {
+
+					context.fillStyle = "Red";
+				}
+
+				//Fill in bar position - x, y, width, height
+				if (percent > 0) {
+					context.fillRect(155, 507, 120 * percent, 28);
+				}
+				else {
+					context.fillRect(155, 507, 0, 28);
+				}
+			});
 		},
 
 		update: function() {
