@@ -1,0 +1,21 @@
+	Grant
+Adding HP to Player 
+HP Bar linked to Player Health
+Score Label
+Wave Label
+Enemies Remaining Label
+
+	Scotty
+Place Tower via Mouse
+Build Phase After Each Wave
+Button to Continue to Next Wave from Build Phase
+
+	Ian
+Idle Animation for Player (could just scale using timeline)
+Explosion animation
+Stray debris animation for background
+Ozone cloud animation
+
+	Calvin
+Normalize bullet speeds
+Bullet Collision w/ Enemies

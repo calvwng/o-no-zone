@@ -32,4 +32,4 @@ var Bullet = enchant.Class.create(enchant.Sprite, {
       enchant.Sprite.call(this, 46, 96);
       this.image = game.assets["beams_2.png"];
    }
-}
+});
