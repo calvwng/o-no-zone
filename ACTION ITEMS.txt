@@ -17,6 +17,4 @@ Stray debris animation for background
 Ozone cloud animation
 
 	Calvin
-Enemy Movement
-Bullet Spawn
-Bullet Travel in Direction of Click
+Bullet Collision w/ Enemies
