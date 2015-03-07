@@ -46,6 +46,26 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
+	//turret class that players can move, have all other turrets inherit this class
+	var Turret = Class.create(Sprite, {
+		initialize: function() {
+			var game, turret;
+
+			Sprite.apply(this,);
+
+			game= Game.instance;
+
+			turret = this;
+
+			this.addEventListener('touchstart', this.selected);
+
+		} ,
+
+		selected: function(e){
+			
+		}
+	});
+
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
