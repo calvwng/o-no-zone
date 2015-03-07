@@ -17,4 +17,5 @@ Stray debris animation for background
 Ozone cloud animation
 
 	Calvin
+Normalize bullet speeds
 Bullet Collision w/ Enemies
