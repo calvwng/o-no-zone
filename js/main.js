@@ -51,7 +51,7 @@ window.onload = function() {
 		initialize: function() {
 			var game, turret;
 
-			Sprite.apply(this,);
+			Sprite.apply(this, [50, 50]); // temporary dimensions until an image is found for it
 
 			game= Game.instance;
 
@@ -458,7 +458,6 @@ window.onload = function() {
 				// console.log("1000 ms interval tick.")
 			});
 		},
-	});
 
       // Currently bound to 'SHIFT' key, for pausing
       bHandler: function(evt) {
