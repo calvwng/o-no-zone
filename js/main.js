@@ -443,8 +443,6 @@ window.onload = function() {
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
-
-            console.log("Should spawn bullet towards " + evt.x + ", " + evt.y);
          }
       }
    });
@@ -514,45 +512,32 @@ window.onload = function() {
          enchant.Sprite.call(this, 46, 69);
          this.image = game.assets["res/images/beams_2.png"];
 
-         this.speed = 10; // horizontal speed
+         this.speed = 20; // horizontal speed
          this.x = x;
          this.y = y;
-         this.targetX = targetX;
-         this.targetY = targetY;
-         this.m = (targetY - this.y) / (targetX - this.x);
-         this.b = targetY - this.m * targetX;
-         // console.log("y = " + this.m + " * x " + this.b);
 
-         var x2 = Math.pow(targetX - this.x, 2);
-         var y2 = Math.pow(targetY - this.y, 2);
-         var dist = Math.sqrt(x2 + y2);
-
-         this.lateralDirection;
-         if (this.x < targetX) {
-            this.lateralDirection = "right";
-            console.log("clicked right");
+         // Find the movement between the bullet and target
+         var targetVec = new Victor(targetX, targetY);
+         var bulletStartVec = new Victor(x, y);
+         var movementVec = targetVec.subtract(bulletStartVec);
+         // Normalize vector to length 1 if movement is not [0, 0]
+         if (movementVec.x != 0 && movementVec.y != 0) {
+            movementVec.normalize();
          }
-         else {
-            this.lateralDirection = "left";
-            console.log("clicked left");
-         }
+         this.movementVec = movementVec;
 
          this.addEventListener(Event.ENTER_FRAME, this.update);
       },
 
       update: function() {
-         // Travel along calculated line and remove when out of bounds
-         if (this.lateralDirection == "right") {
-            this.x += this.speed;
-         }
-         else {
-            this.x -= this.speed;
-         }
-         this.y = this.m * this.x + this.b;
          // Remove from "bullets" group when out of bounds + buffer
          if (this.x < 0 || this.x > 820 || this.y < 0 || this.y > 620) {
             this.parentNode.removeChild(this);
          }
+
+         // Move bullet according to normalized movement vector & speedw
+         this.x += this.movementVec.x * this.speed;
+         this.y += this.movementVec.y * this.speed;
       }
    });
 }
