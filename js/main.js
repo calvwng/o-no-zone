@@ -231,7 +231,6 @@ window.onload = function() {
 			controlsButton.x = 480;
 			controlsButton.y = 400;
 
-
 			// Add everything to the scene
 			this.addChild(bg);
 			this.addChild(logo);
@@ -246,7 +245,14 @@ window.onload = function() {
 		// Loads the first level if Start button is clicked
 		playGame: function(evt) {
 			var game = Game.instance;
-			game.replaceScene(new Level());
+			//create a new player to be passed to level
+		    var player = new Player();
+		    player.x = 40;
+		    player.y = 40;
+		    player.health = player.maxHealth = 100;
+		    player.score = 0;
+
+			game.replaceScene(new Level(player, 3));
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -318,18 +324,21 @@ window.onload = function() {
 	* Level Game Logic
 	*/
 	var Level = Class.create (Scene, {
-		initialize: function() {
+		initialize: function(playerArg, maxEnemiesArg) {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, ozoneGroup, scenery, i, player, scoreDisplay;
+		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
+		    var maxEnemies = maxEnemiesArg;
 		    var healthbar, hudbar;
 
           var pauseLabel;
           this.paused = false;
 
 		    this.maxSpinners = maxSpinners;
+		    player = playerArg;
+		    this.player = playerArg;
 		    game = Game.instance;
 
 		    bg = new Sprite(800, 600);
@@ -337,23 +346,18 @@ window.onload = function() {
 
 		    enemies = new Group();
 		    this.enemies = enemies;
+		    this.maxEnemies = maxEnemies;
+		    this.enemiesKilled = 0;
 
           bullets = new Group();
           this.bullets = bullets;
-
-		    //create a new player
-		    player = new Player();
-		    player.x = 40;
-		    player.y = 40;
-		    player.health = player.maxHealth = 100;
-		    player.score = 0;
 
 		    hudbar = new Sprite(300, 100);
 		    hudbar.image = game.assets['res/images/portrait_idle.png'];
 		    hudbar.x = 0;
 		    hudbar.y = 450;
 
-		    scoreDisplay = new Label("Score: " + player.score);
+		    scoreDisplay = new Label("Ozone Recovered: " + this.player.score);
 		    scoreDisplay.x = 300;
 		    scoreDisplay.y = 10;
 		    scoreDisplay.color = 'white';
@@ -445,7 +449,127 @@ window.onload = function() {
 				// console.log("1000 ms interval tick.")
 			});
 
-			this.scoreDisplay.text = "Score: " + this.player.score;
+			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
+
+			if (this.enemiesKilled >= this.maxEnemies) {
+				Game.instance.replaceScene(new Store(this.player, this.maxEnemies));
+			}
+		},
+
+      // Currently bound to 'SHIFT' key, for pausing
+      bHandler: function(evt) {
+          var game = Game.instance;
+
+          if (this.paused == true) {
+             game.resume();
+             this.removeChild(this.pauseLabel);        
+          }
+          else {
+             game.pause();
+             this.addChild(this.pauseLabel);
+          }
+          this.paused = !this.paused;
+      },      
+
+      touchHandler: function(evt) {
+         // If not paused && mouse is within game bounds
+         if (!this.paused && evt.x < 800 && evt.y < 600) {
+            // Spawn a bullet moving in line towards mouse
+            var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
+            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
+            var degrees = (radians/Math.PI) * 180;
+            bullet.rotation = degrees + 90;     
+            this.bullets.addChild(bullet);
+         }
+      }
+   });
+
+	/**
+	* Store level for upgrades
+	*/
+	var Store = Class.create (Scene, {
+		initialize: function(playerArg, maxEnemiesArg) {
+		    Scene.apply(this);
+
+		    var game, bg, bullets, player, enemies, i, scoreDisplay;
+		    var maxEnemies = maxEnemiesArg;
+
+          	var pauseLabel;
+          	this.paused = false;
+
+		    player = playerArg;
+		    this.player = playerArg;
+		    game = Game.instance;
+
+		    bg = new Sprite(800, 600);
+		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+
+		    enemies = new Group();
+		    this.enemies = enemies;
+		    this.maxEnemies = maxEnemies;
+		    this.enemiesKilled = 0;
+
+          	bullets = new Group();
+          	this.bullets = bullets;
+
+		    var hudbar = new Sprite(300, 100);
+		    hudbar.image = game.assets['res/images/portrait_idle.png'];
+		    hudbar.x = 0;
+		    hudbar.y = 450;
+
+		    scoreDisplay = new Label("Ozone Recovered: " + this.player.score);
+		    scoreDisplay.x = 300;
+		    scoreDisplay.y = 10;
+		    scoreDisplay.color = 'white';
+		    scoreDisplay.font = 'bold 14px sans-serif';
+		    scoreDisplay.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
+
+          this.player = player;
+
+          // Create the pause label
+          pauseLabel = new Label('PAUSED');
+          pauseLabel.x = 250;
+          pauseLabel.y = 250;
+          pauseLabel.color = 'red';
+          pauseLabel.font = 'bold 32px sans-serif';
+          pauseLabel.textAlign = 'center';
+          this.pauseLabel = pauseLabel;
+
+          // Experimental Ozone cloud sprite for future gameplay mechanics
+          ozoneGroup = new Group();
+          this.ozoneGroup = ozoneGroup;
+          var ozoneCloud = new Ozone(300, 300);
+          ozoneGroup.addChild(ozoneCloud);
+
+          // Group for scenery sprites and effects
+          scenery = new Group();
+          this.scenery = scenery;
+
+		    this.addChild(bg);
+          this.addChild(bullets);
+		    this.addChild(enemies);	
+		    this.addChild(player);
+          this.addChild(scenery);
+          this.addChild(ozoneGroup);
+		    this.addChild(hudbar);
+		    this.addChild(scoreDisplay);
+
+		    // draw healthbar
+		     healthbar = document.getElementById("canvas");
+		     var context = canvas.getContext('2d');
+		     context.fillStyle = "Green";
+		     context.fillRect(0, 0, 120, 28);
+
+		    this.tl.setTimeBased();
+		    this.addEventListener(Event.ENTER_FRAME, this.update);
+          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
+          this.addEventListener(Event.TOUCH_START, this.touchHandler);
+ 
+		},
+
+		update: function() {
+			
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -578,6 +702,7 @@ window.onload = function() {
                });
                this.parentNode.removeChild(this);
                scene.player.score += 10;
+               scene.enemiesKilled += 1;
                break;
             }
          }

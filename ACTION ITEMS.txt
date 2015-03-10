@@ -1,9 +1,10 @@
 	Grant
-Adding HP to Player 
-HP Bar linked to Player Health
-Score Label
+Adding HP to Player ---------------------------DONE
+HP Bar linked to Player Health-----------------DONE
+Score Label------------------------------------DONE
 Wave Label
 Enemies Remaining Label
+Store screen
 
 	Scotty
 Place Tower via Mouse
