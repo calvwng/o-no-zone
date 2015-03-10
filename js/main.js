@@ -69,7 +69,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game, player, health;
+			var game, player, health, maxHealth, score;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -77,7 +77,9 @@ window.onload = function() {
 			game = Game.instance;
 			//refference to current player
 			player = this;
-			health = 100;
+			health = maxHealth = 100;
+			score = 0;
+
 
 			//initialize player velocity and acceleration (used for momentum)
 			this.vx = 0;
@@ -316,7 +318,7 @@ window.onload = function() {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, ozoneGroup, i, player;
+		    var game, bg, enemies, bullets, ozoneGroup, i, player, scoreDisplay;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
 		    var healthbar, hudbar;
@@ -340,12 +342,21 @@ window.onload = function() {
 		    player = new Player();
 		    player.x = 40;
 		    player.y = 40;
-		    player.health = 100;
+		    player.health = player.maxHealth = 100;
+		    player.score = 0;
 
 		    hudbar = new Sprite(300, 100);
 		    hudbar.image = game.assets['res/images/portrait_idle.png'];
 		    hudbar.x = 0;
 		    hudbar.y = 450;
+
+		    scoreDisplay = new Label("Score: " + player.score);
+		    scoreDisplay.x = 300;
+		    scoreDisplay.y = 10;
+		    scoreDisplay.color = 'white';
+		    scoreDisplay.font = 'bold 14px sans-serif';
+		    scoreDisplay.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
 
           this.player = player;
 
@@ -370,6 +381,7 @@ window.onload = function() {
 		    this.addChild(player);
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
+		    this.addChild(scoreDisplay);
 
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
@@ -386,10 +398,11 @@ window.onload = function() {
            this.addEventListener(Event.TOUCH_END, function() {
            	if (!this.paused) {
               player.health -= 10;
+
               // Clear the canvas
               canvas.width = canvas.width;
               // Calculate health
-              var percent = player.health/100;
+              var percent = player.health/player.maxHealth;
               context.fillStyle = "black";
               context.fillRect(0, 0, 120, 28);
               if (percent > 0.5) {
@@ -421,9 +434,10 @@ window.onload = function() {
 					var enemyY = Math.floor(Math.random() * 600);
 					this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
 				}
-
 				// console.log("1000 ms interval tick.")
 			});
+
+			this.scoreDisplay.text = "Score: " + this.player.score;
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -550,6 +564,7 @@ window.onload = function() {
             if (this.within(enemy, 32)) {
                enemies.removeChild(enemy);
                this.parentNode.removeChild(this);
+               scene.player.score += 10;
                break;
             }
          }
