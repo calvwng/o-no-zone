@@ -12,7 +12,6 @@ Button to Continue to Next Wave from Build Phase
 
 	Ian
 Idle Animation for Player (could just scale using timeline)
-Explosion animation
 Stray debris animation for background
 Find animated backgrounds (preferably rotating earth or upper atmosphere),
  or move background based on player movement

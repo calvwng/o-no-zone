@@ -22,7 +22,10 @@ window.onload = function() {
 				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
 				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
 				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "res/images/winning.png", 
-             "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png");
+             "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png",
+             "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
+             "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
+             "res/images/boomerang_bullet.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -243,7 +246,7 @@ window.onload = function() {
 		// Loads the first level if Start button is clicked
 		playGame: function(evt) {
 			var game = Game.instance;
-			game.replaceScene(new Level1());
+			game.replaceScene(new Level());
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -312,13 +315,13 @@ window.onload = function() {
 	});
 
 	/**
-	* Level 1 Game Logic
+	* Level Game Logic
 	*/
-	var Level1 = Class.create (Scene, {
+	var Level = Class.create (Scene, {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, ozoneGroup, i, player, scoreDisplay;
+		    var game, bg, enemies, bullets, ozoneGroup, scenery, i, player, scoreDisplay;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
 		    var healthbar, hudbar;
@@ -375,10 +378,15 @@ window.onload = function() {
           var ozoneCloud = new Ozone(300, 300);
           ozoneGroup.addChild(ozoneCloud);
 
+          // Group for scenery sprites and effects
+          scenery = new Group();
+          this.scenery = scenery;
+
 		    this.addChild(bg);
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
+          this.addChild(scenery);
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 		    this.addChild(scoreDisplay);
@@ -483,7 +491,7 @@ window.onload = function() {
          restartButton.x = 345;
          restartButton.y = 325;
          this.addEventListener("touchstart", function() {
-             game.replaceScene(new Level1());
+             game.replaceScene(new Level());
          });
 
          this.backgroundColor = "black";
@@ -562,7 +570,12 @@ window.onload = function() {
          for (var i = 0; i < enemies.childNodes.length; i++) {
             var enemy = enemies.childNodes[i];
             if (this.within(enemy, 32)) {
-               enemies.removeChild(enemy);
+               new Explosion(enemy.x, enemy.y, 0.10);
+               // enemy.tl.fadeOut(5);       // TODO: Fade & scale aren't working here
+               // enemy.tl.scaleTo(0.25, 5);
+               enemies.tl.delay(5).then(function() {
+                  enemies.removeChild(enemy);
+               });
                this.parentNode.removeChild(this);
                scene.player.score += 10;
                break;
@@ -599,4 +612,33 @@ window.onload = function() {
           }
       }
    });
+
+   var Explosion = enchant.Class.create(Sprite, {
+      initialize: function(x, y, maxTime) {
+         Sprite.apply(this, [64, 64]);
+         this.image = Game.instance.assets["res/images/explosion_sheet16.png"];
+         this.x = x;
+         this.y = y;
+         this.maxTime = maxTime;
+
+         var scenery = Game.instance.currentScene.scenery;
+         scenery.addChild(this);
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= this.maxTime) {
+             if (this.frame < 8) {
+                this.frame++;
+             }
+             else {
+                this.parentNode.removeChild(this);   // Remove explosion after animation
+             }
+             this.animationDuration -= 0.05;
+          }
+      }
+   });   
 }
