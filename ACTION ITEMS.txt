@@ -14,6 +14,8 @@ Button to Continue to Next Wave from Build Phase
 Idle Animation for Player (could just scale using timeline)
 Explosion animation
 Stray debris animation for background
-Ozone cloud animation
 
 	Calvin
+Add at least 2 more enemy types and 1 boss
+Gain resources from defeating enemies
+Narrative?

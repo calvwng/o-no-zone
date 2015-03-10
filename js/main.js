@@ -21,8 +21,8 @@ window.onload = function() {
 				 'res/images/space_bg2.jpeg', 'res/images/space_bg3.jpeg', 'res/images/spacebar.png',
 				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
 				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
-				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "./res/images/winning.png", "./res/images/game_over.png", 
-                                 "./res/images/restart_button.png");
+				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "res/images/winning.png", 
+             "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -316,7 +316,7 @@ window.onload = function() {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, i, player;
+		    var game, bg, enemies, bullets, ozoneGroup, i, player;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
 		    var healthbar, hudbar;
@@ -356,15 +356,22 @@ window.onload = function() {
           pauseLabel.color = 'red';
           pauseLabel.font = 'bold 32px sans-serif';
           pauseLabel.textAlign = 'center';
-          this.pauseLabel = pauseLabel;              
+          this.pauseLabel = pauseLabel;
+
+          // Experimental Ozone cloud sprite for future gameplay mechanics
+          ozoneGroup = new Group();
+          this.ozoneGroup = ozoneGroup;
+          var ozoneCloud = new Ozone(300, 300);
+          ozoneGroup.addChild(ozoneCloud);
 
 		    this.addChild(bg);
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
+          this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 
-		    // // draw healthbar
+		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
 		     var context = canvas.getContext('2d');
 		     context.fillStyle = "Green";
@@ -375,7 +382,7 @@ window.onload = function() {
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
 
-        //   // health positioning is kinda janky, also for now just on an event listener
+          // health positioning is kinda janky, also for now just on an event listener
            this.addEventListener(Event.TOUCH_END, function() {
            	if (!this.paused) {
               player.health -= 10;
@@ -550,6 +557,31 @@ window.onload = function() {
          // Move bullet according to normalized movement vector & speedw
          this.x += this.movementVec.x * this.speed;
          this.y += this.movementVec.y * this.speed;
+      }
+   });
+
+   var Ozone = enchant.Class.create(Sprite, {
+      initialize: function(x, y) {
+         Sprite.apply(this, [256, 256]);
+         this.image = Game.instance.assets["res/images/Smoke30Frames_0.png"];
+         this.x = x;
+         this.y = y;
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= 0.05) {
+             if (this.frame < 30) {
+                this.frame++;
+             }
+             else {
+                this.frame = 0;     // Reset to frame 0
+             }
+             this.animationDuration -= 0.05;
+          }
       }
    });
 }
