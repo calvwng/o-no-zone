@@ -365,10 +365,10 @@ window.onload = function() {
 		    this.addChild(hudbar);
 
 		    // // draw healthbar
-		    // healthbar = document.getElementById("canvas");
-		    // var context = canvas.getContext('2d');
-		    // context.fillStyle = "Green";
-		    // context.fillRect(155, 507, 120, 28);
+		     healthbar = document.getElementById("canvas");
+		     var context = canvas.getContext('2d');
+		     context.fillStyle = "Green";
+		     context.fillRect(0, 0, 120, 28);
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -376,32 +376,33 @@ window.onload = function() {
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
 
         //   // health positioning is kinda janky, also for now just on an event listener
-        //   this.addEventListener(Event.TOUCH_END, function() {
-
-        //      player.health -= 10;
-        //      // Clear the canvas
-        //      canvas.width = canvas.width;
-        //      // Calculate health
-        //      var percent = player.health/100;
-        //      context.fillStyle = "black";
-        //      context.fillRect(155, 507, 120, 28);
-        //      if (percent > 0.5) {
-        //         context.fillStyle = "Green";
-        //      }
-        //      else if (percent > 0.3) {
-        //         context.fillStyle = "Yellow";
-        //      }
-        //      else {
-        //         context.fillStyle = "Red";
-        //      }
-        //      //Fill in bar position - x, y, width, height
-        //      if (percent > 0) {
-        //         context.fillRect(155, 507, 120 * percent, 28);
-        //      }
-        //      else {
-        //         context.fillRect(155, 507, 0, 28);
-        //      }
-        // });          
+           this.addEventListener(Event.TOUCH_END, function() {
+           	if (!this.paused) {
+              player.health -= 10;
+              // Clear the canvas
+              canvas.width = canvas.width;
+              // Calculate health
+              var percent = player.health/100;
+              context.fillStyle = "black";
+              context.fillRect(0, 0, 120, 28);
+              if (percent > 0.5) {
+                 context.fillStyle = "Green";
+              }
+              else if (percent > 0.3) {
+                 context.fillStyle = "Yellow";
+              }
+              else {
+                 context.fillStyle = "Red";
+              }
+              //Fill in bar position - x, y, width, height
+              if (percent > 0) {
+                 context.fillRect(0, 0, 120 * percent, 28);
+              }
+              else {
+                 context.fillRect(0, 0, 0, 28);
+              }
+             }
+         });          
 		},
 
 		update: function() {
