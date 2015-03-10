@@ -535,6 +535,18 @@ window.onload = function() {
             this.parentNode.removeChild(this);
          }
 
+         // Collision logic with enemies 
+         var scene = Game.instance.currentScene;
+         var enemies = scene.enemies;
+         for (var i = 0; i < enemies.childNodes.length; i++) {
+            var enemy = enemies.childNodes[i];
+            if (this.within(enemy, 32)) {
+               enemies.removeChild(enemy);
+               this.parentNode.removeChild(this);
+               break;
+            }
+         }
+
          // Move bullet according to normalized movement vector & speedw
          this.x += this.movementVec.x * this.speed;
          this.y += this.movementVec.y * this.speed;
