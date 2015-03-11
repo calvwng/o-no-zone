@@ -25,7 +25,7 @@ window.onload = function() {
              "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png",
              "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
-             "res/images/boomerang_bullet.png");
+             "res/images/boomerang_bullet.png", "res/images/beams.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -252,7 +252,14 @@ window.onload = function() {
 		    player.health = player.maxHealth = 100;
 		    player.score = 0;
 
-			game.replaceScene(new Level(player, 3));
+		    var healthPU = new PowerUp();
+		    healthPU.powerType = "health";
+		    healthPU.image = game.assets['res/images/beams.png'];
+
+		    AllPowerUps = new Group();
+		    AllPowerUps.addChild(healthPU);
+
+			game.replaceScene(new Level(player, 3, AllPowerUps));
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -324,7 +331,7 @@ window.onload = function() {
 	* Level Game Logic
 	*/
 	var Level = Class.create (Scene, {
-		initialize: function(playerArg, maxEnemiesArg) {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
 		    Scene.apply(this);
 
 		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
@@ -339,6 +346,8 @@ window.onload = function() {
 		    this.maxSpinners = maxSpinners;
 		    player = playerArg;
 		    this.player = playerArg;
+		    this.powerups = powerupsArg;
+		    this.store = false;
 		    game = Game.instance;
 
 		    bg = new Sprite(800, 600);
@@ -452,7 +461,7 @@ window.onload = function() {
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
 
 			if (this.enemiesKilled >= this.maxEnemies) {
-				Game.instance.replaceScene(new Store(this.player, this.maxEnemies));
+				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups));
 			}
 		},
 
@@ -488,7 +497,7 @@ window.onload = function() {
 	* Store level for upgrades
 	*/
 	var Store = Class.create (Scene, {
-		initialize: function(playerArg, maxEnemiesArg) {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
 		    Scene.apply(this);
 
 		    var game, bg, bullets, player, enemies, i, scoreDisplay;
@@ -499,7 +508,9 @@ window.onload = function() {
 
 		    player = playerArg;
 		    this.player = playerArg;
+		    var powerups = powerupsArg;
 		    game = Game.instance;
+		    this.store = true;
 
 		    bg = new Sprite(800, 600);
 		    bg.image = game.assets['res/images/space_bg3.jpeg'];
@@ -526,6 +537,16 @@ window.onload = function() {
 		    this.scoreDisplay = scoreDisplay;
 
           this.player = player;
+
+          for (i = 0; i < powerups.length; i++) {
+
+          	if (this.player.score >= powerups[i].ozoneLevel) {
+          		powerups[i].unlocked = true;
+          	}
+
+          }
+
+          this.powerups = powerups;
 
           // Create the pause label
           pauseLabel = new Label('PAUSED');
@@ -554,6 +575,7 @@ window.onload = function() {
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 		    this.addChild(scoreDisplay);
+		    this.addChild(powerups);
 
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
@@ -569,7 +591,7 @@ window.onload = function() {
 		},
 
 		update: function() {
-			
+
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -707,6 +729,26 @@ window.onload = function() {
             }
          }
 
+         // Collision logic with powerups
+         if (scene.store == true) {
+
+         	var powerups = scene.powerups;
+
+         	for (i = 0; i < powerups.childNodes.length; i++) {
+         		var pUp = powerups.childNodes[i];
+
+         		if (this.within (pUp, 32)) {
+         			if (pUp.unlocked && pUp.unpurchased) {
+         				pUp.unpurchased = false;
+         				pUp.takeEffect(pUp.powerType);
+         				this.parentNode.removeChild(this);
+         				console.log ("CONTACT");
+         				game.replaceScene(new Level(scene.player, scene.maxEnemies * 2, powerups));
+         			}
+         		}
+         	}
+     	}
+
          // Move bullet according to normalized movement vector & speedw
          this.x += this.movementVec.x * this.speed;
          this.y += this.movementVec.y * this.speed;
@@ -764,6 +806,33 @@ window.onload = function() {
              }
              this.animationDuration -= 0.05;
           }
+      }
+   });
+
+   var PowerUp = enchant.Class.create(Sprite, {
+
+      initialize: function() {
+
+         Sprite.apply(this, [20, 20]);
+         //this.image = Game.instance.assets["beams.png"];
+         this.x = 100;
+         this.y = 100;
+
+         this.ozoneLevel = 10;
+         this.unpurchased = true;
+         this.unlocked = true;
+
+      },
+
+      takeEffect: function(powerType) {
+
+      	if (powerType == "health") {
+
+      		var scene = Game.instance.currentScene;
+      		scene.player.maxHealth *= 2;
+      		scene.player.health = scene.player.maxHealth;
+      		console.log("Health: " + scene.player.maxHealth);
+      	}
       }
    });   
 }
