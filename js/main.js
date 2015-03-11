@@ -161,7 +161,7 @@ window.onload = function() {
 
 				//checking the input of the user
 				if (game.input.left) this.ax -= 0.5;
-<<<<<<< HEAD
+
             	if (game.input.right) this.ax += 0.5;
             	if (game.input.up) this.ay -= 0.5;
             	if (game.input.down) this.ay += 0.5;
@@ -175,52 +175,8 @@ window.onload = function() {
 		} 
 
 	});
-=======
-         	if (game.input.right) this.ax += 0.5;
-         	if (game.input.up) this.ay -= 0.5;
-         	if (game.input.down) this.ay += 0.5;
-         	this.vx += this.ax + friction_x;
-         	this.vy += this.ay + friction_y; 
-         	this.vx = Math.min(Math.max(this.vx, -10), 10);
-         	this.vy = Math.min(Math.max(this.vy, -10), 10);
 
-         	this.x += this.vx;
-         	this.y += this.vy;
 
-         	document.onmousemove = handleMouseMove;
-    			function handleMouseMove(event) {
-        			var dot, eventDoc, doc, body, pageX, pageY;
-
-        			event = event || window.event; // IE-ism
-
-			        // If pageX/Y aren't available and clientX/Y are,
-			        // calculate pageX/Y - logic taken from jQuery.
-			        if (event.pageX == null && event.clientX != null) {
-			            eventDoc = (event.target && event.target.ownerDocument) || document;
-			            doc = eventDoc.documentElement;
-			            body = eventDoc.body;
-
-			            event.pageX = event.clientX +
-			              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-			              (doc && doc.clientLeft || body && body.clientLeft || 0);
-			            event.pageY = event.clientY +
-			              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-			              (doc && doc.clientTop  || body && body.clientTop  || 0 );
-			        }
-        			// console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
-
-               mouseX = event.pageX;
-               mouseY = event.pageY;
-
-        			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
-        			angle = angle * (180/Math.PI);
-
-        			player.rotation = 90 + angle;
-    			} // END handleMouseMove
-         }); // END anonymous 'enterframe event listener'
-		},
-	}); // END Player
->>>>>>> FETCH_HEAD
 
 	/**
 	* SpinnerEnemy class
@@ -558,7 +514,7 @@ window.onload = function() {
          if (!this.paused && evt.x < 800 && evt.y < 600) {
             // Spawn a bullet moving in line towards mouse
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
-            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
+            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
