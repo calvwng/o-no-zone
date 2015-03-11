@@ -456,6 +456,14 @@ window.onload = function() {
 					this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
 				}
 				// console.log("1000 ms interval tick.")
+
+            //-- TODO: CONCURRENTLY spawn a new asteroid after 5 + (0 to 10) seconds
+            //         Probably do this by NOT using same "tl", otherwise the delays stack on each other...
+            // this.tl.delay(5000 + Math.floor(Math.random() * 10000)).then(function() {
+            //    var asteroidX = Math.floor(Math.random() * 2) ? -50 : 850;
+            //    var asteroidY = Math.floor(Math.random() * 600);
+            //    new Asteroid(asteroidX, asteroidY, 0.5);
+            // });            
 			});
 
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
@@ -835,4 +843,48 @@ window.onload = function() {
       	}
       }
    });   
+
+   var Asteroid = enchant.Class.create(Sprite, {
+      initialize: function(x, y, maxTime) {
+         Sprite.apply(this, [109, 91]);
+         this.image = Game.instance.assets["res/images/asteroid_sheet30.png"];
+         this.x = x;
+         this.y = y;
+         this.maxTime = maxTime;
+
+         var scenery = Game.instance.currentScene.scenery;
+         scenery.addChild(this);
+
+         // Find the movement between the bullet and target
+         this.speed = 2;
+         var targetVec = new Victor(Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
+         var startVec = new Victor(x, y);
+         var movementVec = targetVec.subtract(startVec);
+         // Normalize vector to length 1 if movement is not [0, 0]
+         if (movementVec.x != 0 && movementVec.y != 0) {
+            movementVec.normalize();
+         }
+         this.movementVec = movementVec;         
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= this.maxTime) {
+             if (this.frame < 30) {
+                this.frame++;
+             }
+             else {
+                this.frame = 0;
+             }
+             this.animationDuration -= 0.05;
+          }
+
+         // Move asteroid according to normalized movement vector & speedw
+         this.x += this.movementVec.x * this.speed;
+         this.y += this.movementVec.y * this.speed;          
+      }
+   });      
 }
