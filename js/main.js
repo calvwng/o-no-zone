@@ -21,8 +21,11 @@ window.onload = function() {
 				 'res/images/space_bg2.jpeg', 'res/images/space_bg3.jpeg', 'res/images/spacebar.png',
 				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
 				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
-				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "./res/images/winning.png", "./res/images/game_over.png", 
-                                 "./res/images/restart_button.png");
+				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "res/images/winning.png", 
+             "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png",
+             "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
+             "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
+             "res/images/boomerang_bullet.png", "res/images/beams.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -50,6 +53,7 @@ window.onload = function() {
 	var Turret = Class.create(Sprite, {
 		initialize: function() {
 			var game, turret, touching;
+
 
 			touching =false;
 
@@ -80,6 +84,7 @@ window.onload = function() {
 
 				//console.log("x : " + x + "y : " + y);
 
+
 				if(touching){
 					turret.x = x - turret.width/2;
 					turret.y = y - turret.width/2; 
@@ -92,7 +97,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game, player;
+			var game, player, health, maxHealth, score;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -100,6 +105,9 @@ window.onload = function() {
 			game = Game.instance;
 			//refference to current player
 			player = this;
+			health = maxHealth = 100;
+			score = 0;
+
 
 			//initialize player velocity and acceleration (used for momentum)
 			this.vx = 0;
@@ -153,6 +161,7 @@ window.onload = function() {
 
 				//checking the input of the user
 				if (game.input.left) this.ax -= 0.5;
+<<<<<<< HEAD
             	if (game.input.right) this.ax += 0.5;
             	if (game.input.up) this.ay -= 0.5;
             	if (game.input.down) this.ay += 0.5;
@@ -166,6 +175,52 @@ window.onload = function() {
 		} 
 
 	});
+=======
+         	if (game.input.right) this.ax += 0.5;
+         	if (game.input.up) this.ay -= 0.5;
+         	if (game.input.down) this.ay += 0.5;
+         	this.vx += this.ax + friction_x;
+         	this.vy += this.ay + friction_y; 
+         	this.vx = Math.min(Math.max(this.vx, -10), 10);
+         	this.vy = Math.min(Math.max(this.vy, -10), 10);
+
+         	this.x += this.vx;
+         	this.y += this.vy;
+
+         	document.onmousemove = handleMouseMove;
+    			function handleMouseMove(event) {
+        			var dot, eventDoc, doc, body, pageX, pageY;
+
+        			event = event || window.event; // IE-ism
+
+			        // If pageX/Y aren't available and clientX/Y are,
+			        // calculate pageX/Y - logic taken from jQuery.
+			        if (event.pageX == null && event.clientX != null) {
+			            eventDoc = (event.target && event.target.ownerDocument) || document;
+			            doc = eventDoc.documentElement;
+			            body = eventDoc.body;
+
+			            event.pageX = event.clientX +
+			              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
+			              (doc && doc.clientLeft || body && body.clientLeft || 0);
+			            event.pageY = event.clientY +
+			              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
+			              (doc && doc.clientTop  || body && body.clientTop  || 0 );
+			        }
+        			// console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
+
+               mouseX = event.pageX;
+               mouseY = event.pageY;
+
+        			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
+        			angle = angle * (180/Math.PI);
+
+        			player.rotation = 90 + angle;
+    			} // END handleMouseMove
+         }); // END anonymous 'enterframe event listener'
+		},
+	}); // END Player
+>>>>>>> FETCH_HEAD
 
 	/**
 	* SpinnerEnemy class
@@ -230,7 +285,6 @@ window.onload = function() {
 			controlsButton.x = 480;
 			controlsButton.y = 400;
 
-
 			// Add everything to the scene
 			this.addChild(bg);
 			this.addChild(logo);
@@ -244,9 +298,22 @@ window.onload = function() {
 
 		// Loads the first level if Start button is clicked
 		playGame: function(evt) {
-
 			var game = Game.instance;
-			game.replaceScene(new Level1());
+			//create a new player to be passed to level
+		    var player = new Player();
+		    player.x = 40;
+		    player.y = 40;
+		    player.health = player.maxHealth = 100;
+		    player.score = 0;
+
+		    var healthPU = new PowerUp();
+		    healthPU.powerType = "health";
+		    healthPU.image = game.assets['res/images/beams.png'];
+
+		    AllPowerUps = new Group();
+		    AllPowerUps.addChild(healthPU);
+
+			game.replaceScene(new Level(player, 3, AllPowerUps));
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -315,19 +382,28 @@ window.onload = function() {
 	});
 
 	/**
-	* Level 1 Game Logic
+	* Level Game Logic
 	*/
-	var Level1 = Class.create (Scene, {
-		initialize: function() {
+	var Level = Class.create (Scene, {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, i, player, turret;
+
+		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
+
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
+		    var maxEnemies = maxEnemiesArg;
+		    var healthbar, hudbar;
+
           var pauseLabel;
           this.paused = false;
 
 		    this.maxSpinners = maxSpinners;
+		    player = playerArg;
+		    this.player = playerArg;
+		    this.powerups = powerupsArg;
+		    this.store = false;
 		    game = Game.instance;
 
 		    bg = new Sprite(800, 600);
@@ -335,14 +411,25 @@ window.onload = function() {
 
 		    enemies = new Group();
 		    this.enemies = enemies;
+		    this.maxEnemies = maxEnemies;
+		    this.enemiesKilled = 0;
 
           bullets = new Group();
           this.bullets = bullets;
 
-		    //create a new player
-		    player = new Player();
-		    player.x = 40;
-		    player.y = 40;
+		    hudbar = new Sprite(300, 100);
+		    hudbar.image = game.assets['res/images/portrait_idle.png'];
+		    hudbar.x = 0;
+		    hudbar.y = 450;
+
+		    scoreDisplay = new Label("Ozone Recovered: " + this.player.score);
+		    scoreDisplay.x = 300;
+		    scoreDisplay.y = 10;
+		    scoreDisplay.color = 'white';
+		    scoreDisplay.font = 'bold 14px sans-serif';
+		    scoreDisplay.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
+
           this.player = player;
 
           //testing turret 
@@ -357,18 +444,71 @@ window.onload = function() {
           pauseLabel.color = 'red';
           pauseLabel.font = 'bold 32px sans-serif';
           pauseLabel.textAlign = 'center';
-          this.pauseLabel = pauseLabel;              
+          this.pauseLabel = pauseLabel;
+
+          // Experimental Ozone cloud sprite for future gameplay mechanics
+          ozoneGroup = new Group();
+          this.ozoneGroup = ozoneGroup;
+          var ozoneCloud = new Ozone(300, 300);
+          ozoneGroup.addChild(ozoneCloud);
+
+          // Group for scenery sprites and effects
+          scenery = new Group();
+          this.scenery = scenery;
 
 		    this.addChild(bg);
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
+
 		    this.addChild(turret);
+
+          this.addChild(scenery);
+          this.addChild(ozoneGroup);
+		    this.addChild(hudbar);
+		    this.addChild(scoreDisplay);
+
+		    // draw healthbar
+		     healthbar = document.getElementById("canvas");
+		     var context = canvas.getContext('2d');
+		     context.fillStyle = "Green";
+		     context.fillRect(0, 0, 120, 28);
+
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
+
+          // health positioning is kinda janky, also for now just on an event listener
+           this.addEventListener(Event.TOUCH_END, function() {
+           	if (!this.paused) {
+              player.health -= 10;
+
+              // Clear the canvas
+              canvas.width = canvas.width;
+              // Calculate health
+              var percent = player.health/player.maxHealth;
+              context.fillStyle = "black";
+              context.fillRect(0, 0, 120, 28);
+              if (percent > 0.5) {
+                 context.fillStyle = "Green";
+              }
+              else if (percent > 0.3) {
+                 context.fillStyle = "Yellow";
+              }
+              else {
+                 context.fillStyle = "Red";
+              }
+              //Fill in bar position - x, y, width, height
+              if (percent > 0) {
+                 context.fillRect(0, 0, 120 * percent, 28);
+              }
+              else {
+                 context.fillRect(0, 0, 0, 28);
+              }
+             }
+         });          
 		},
 
 		update: function() {
@@ -380,9 +520,22 @@ window.onload = function() {
 					var enemyY = Math.floor(Math.random() * 600);
 					this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
 				}
-
 				// console.log("1000 ms interval tick.")
+
+            //-- TODO: CONCURRENTLY spawn a new asteroid after 5 + (0 to 10) seconds
+            //         Probably do this by NOT using same "tl", otherwise the delays stack on each other...
+            // this.tl.delay(5000 + Math.floor(Math.random() * 10000)).then(function() {
+            //    var asteroidX = Math.floor(Math.random() * 2) ? -50 : 850;
+            //    var asteroidY = Math.floor(Math.random() * 600);
+            //    new Asteroid(asteroidX, asteroidY, 0.5);
+            // });            
 			});
+
+			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
+
+			if (this.enemiesKilled >= this.maxEnemies) {
+				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups));
+			}
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -405,7 +558,138 @@ window.onload = function() {
          if (!this.paused && evt.x < 800 && evt.y < 600) {
             // Spawn a bullet moving in line towards mouse
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
+            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
+            var degrees = (radians/Math.PI) * 180;
+            bullet.rotation = degrees + 90;     
+            this.bullets.addChild(bullet);
+         }
+      }
+   });
+
+	/**
+	* Store level for upgrades
+	*/
+	var Store = Class.create (Scene, {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
+		    Scene.apply(this);
+
+		    var game, bg, bullets, player, enemies, i, scoreDisplay;
+		    var maxEnemies = maxEnemiesArg;
+
+          	var pauseLabel;
+          	this.paused = false;
+
+		    player = playerArg;
+		    this.player = playerArg;
+		    var powerups = powerupsArg;
+		    game = Game.instance;
+		    this.store = true;
+
+		    bg = new Sprite(800, 600);
+		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+
+		    enemies = new Group();
+		    this.enemies = enemies;
+		    this.maxEnemies = maxEnemies;
+		    this.enemiesKilled = 0;
+
+          	bullets = new Group();
+          	this.bullets = bullets;
+
+		    var hudbar = new Sprite(300, 100);
+		    hudbar.image = game.assets['res/images/portrait_idle.png'];
+		    hudbar.x = 0;
+		    hudbar.y = 450;
+
+		    scoreDisplay = new Label("Ozone Recovered: " + this.player.score);
+		    scoreDisplay.x = 300;
+		    scoreDisplay.y = 10;
+		    scoreDisplay.color = 'white';
+		    scoreDisplay.font = 'bold 14px sans-serif';
+		    scoreDisplay.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
+
+          this.player = player;
+
+          for (i = 0; i < powerups.length; i++) {
+
+          	if (this.player.score >= powerups[i].ozoneLevel) {
+          		powerups[i].unlocked = true;
+          	}
+
+          }
+
+          this.powerups = powerups;
+
+          // Create the pause label
+          pauseLabel = new Label('PAUSED');
+          pauseLabel.x = 250;
+          pauseLabel.y = 250;
+          pauseLabel.color = 'red';
+          pauseLabel.font = 'bold 32px sans-serif';
+          pauseLabel.textAlign = 'center';
+          this.pauseLabel = pauseLabel;
+
+          // Experimental Ozone cloud sprite for future gameplay mechanics
+          ozoneGroup = new Group();
+          this.ozoneGroup = ozoneGroup;
+          var ozoneCloud = new Ozone(300, 300);
+          ozoneGroup.addChild(ozoneCloud);
+
+          // Group for scenery sprites and effects
+          scenery = new Group();
+          this.scenery = scenery;
+
+		    this.addChild(bg);
+          this.addChild(bullets);
+		    this.addChild(enemies);	
+		    this.addChild(player);
+          this.addChild(scenery);
+          this.addChild(ozoneGroup);
+		    this.addChild(hudbar);
+		    this.addChild(scoreDisplay);
+		    this.addChild(powerups);
+
+		    // draw healthbar
+		     healthbar = document.getElementById("canvas");
+		     var context = canvas.getContext('2d');
+		     context.fillStyle = "Green";
+		     context.fillRect(0, 0, 120, 28);
+
+		    this.tl.setTimeBased();
+		    this.addEventListener(Event.ENTER_FRAME, this.update);
+          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
+          this.addEventListener(Event.TOUCH_START, this.touchHandler);
+ 
+		},
+
+		update: function() {
+
+		},
+
+      // Currently bound to 'SHIFT' key, for pausing
+      bHandler: function(evt) {
+          var game = Game.instance;
+
+          if (this.paused == true) {
+             game.resume();
+             this.removeChild(this.pauseLabel);        
+          }
+          else {
+             game.pause();
+             this.addChild(this.pauseLabel);
+          }
+          this.paused = !this.paused;
+      },      
+
+      touchHandler: function(evt) {
+         // If not paused && mouse is within game bounds
+         if (!this.paused && evt.x < 800 && evt.y < 600) {
+            // Spawn a bullet moving in line towards mouse
+            var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
+
             var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
+
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
@@ -428,7 +712,7 @@ window.onload = function() {
          restartButton.x = 345;
          restartButton.y = 325;
          this.addEventListener("touchstart", function() {
-             game.replaceScene(new Level1());
+             game.replaceScene(new Level());
          });
 
          this.backgroundColor = "black";
@@ -478,43 +762,196 @@ window.onload = function() {
          enchant.Sprite.call(this, 46, 69);
          this.image = game.assets["res/images/beams_2.png"];
 
-         this.speed = 10; // horizontal speed
+         this.speed = 20; // horizontal speed
          this.x = x;
          this.y = y;
-         this.targetX = targetX;
-         this.targetY = targetY;
-         this.m = (targetY - this.y) / (targetX - this.x);
-         this.b = targetY - this.m * targetX;
-         // console.log("y = " + this.m + " * x " + this.b);
 
-         var x2 = Math.pow(targetX - this.x, 2);
-         var y2 = Math.pow(targetY - this.y, 2);
-         var dist = Math.sqrt(x2 + y2);
-
-         this.lateralDirection;
-         if (this.x < this.targetX) {
-            this.lateralDirection = "right";
+         // Find the movement between the bullet and target
+         var targetVec = new Victor(targetX, targetY);
+         var bulletStartVec = new Victor(x, y);
+         var movementVec = targetVec.subtract(bulletStartVec);
+         // Normalize vector to length 1 if movement is not [0, 0]
+         if (movementVec.x != 0 && movementVec.y != 0) {
+            movementVec.normalize();
          }
-         else {
-            this.lateralDirection = "left";
-         }
+         this.movementVec = movementVec;
 
          this.addEventListener(Event.ENTER_FRAME, this.update);
       },
 
       update: function() {
-         // Travel along calculated line and remove when out of bounds
-         if (this.lateralDirection == "right") {
-            this.x += this.speed;
-         }
-         else {
-            this.x -= this.speed;
-         }
-         this.y = this.m * this.x + this.b;
          // Remove from "bullets" group when out of bounds + buffer
          if (this.x < 0 || this.x > 820 || this.y < 0 || this.y > 620) {
             this.parentNode.removeChild(this);
          }
+
+         // Collision logic with enemies 
+         var scene = Game.instance.currentScene;
+         var enemies = scene.enemies;
+         for (var i = 0; i < enemies.childNodes.length; i++) {
+            var enemy = enemies.childNodes[i];
+            if (this.within(enemy, 32)) {
+               new Explosion(enemy.x, enemy.y, 0.10);
+               // enemy.tl.fadeOut(5);       // TODO: Fade & scale aren't working here
+               // enemy.tl.scaleTo(0.25, 5);
+               enemies.tl.delay(5).then(function() {
+                  enemies.removeChild(enemy);
+               });
+               this.parentNode.removeChild(this);
+               scene.player.score += 10;
+               scene.enemiesKilled += 1;
+               break;
+            }
+         }
+
+         // Collision logic with powerups
+         if (scene.store == true) {
+
+         	var powerups = scene.powerups;
+
+         	for (i = 0; i < powerups.childNodes.length; i++) {
+         		var pUp = powerups.childNodes[i];
+
+         		if (this.within (pUp, 32)) {
+         			if (pUp.unlocked && pUp.unpurchased) {
+         				pUp.unpurchased = false;
+         				pUp.takeEffect(pUp.powerType);
+         				this.parentNode.removeChild(this);
+         				console.log ("CONTACT");
+         				game.replaceScene(new Level(scene.player, scene.maxEnemies * 2, powerups));
+         			}
+         		}
+         	}
+     	}
+
+         // Move bullet according to normalized movement vector & speedw
+         this.x += this.movementVec.x * this.speed;
+         this.y += this.movementVec.y * this.speed;
       }
    });
+
+   var Ozone = enchant.Class.create(Sprite, {
+      initialize: function(x, y) {
+         Sprite.apply(this, [256, 256]);
+         this.image = Game.instance.assets["res/images/Smoke30Frames_0.png"];
+         this.x = x;
+         this.y = y;
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= 0.05) {
+             if (this.frame < 30) {
+                this.frame++;
+             }
+             else {
+                this.frame = 0;     // Reset to frame 0
+             }
+             this.animationDuration -= 0.05;
+          }
+      }
+   });
+
+   var Explosion = enchant.Class.create(Sprite, {
+      initialize: function(x, y, maxTime) {
+         Sprite.apply(this, [64, 64]);
+         this.image = Game.instance.assets["res/images/explosion_sheet16.png"];
+         this.x = x;
+         this.y = y;
+         this.maxTime = maxTime;
+
+         var scenery = Game.instance.currentScene.scenery;
+         scenery.addChild(this);
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= this.maxTime) {
+             if (this.frame < 8) {
+                this.frame++;
+             }
+             else {
+                this.parentNode.removeChild(this);   // Remove explosion after animation
+             }
+             this.animationDuration -= 0.05;
+          }
+      }
+   });
+
+   var PowerUp = enchant.Class.create(Sprite, {
+
+      initialize: function() {
+
+         Sprite.apply(this, [20, 20]);
+         //this.image = Game.instance.assets["beams.png"];
+         this.x = 100;
+         this.y = 100;
+
+         this.ozoneLevel = 10;
+         this.unpurchased = true;
+         this.unlocked = true;
+
+      },
+
+      takeEffect: function(powerType) {
+
+      	if (powerType == "health") {
+
+      		var scene = Game.instance.currentScene;
+      		scene.player.maxHealth *= 2;
+      		scene.player.health = scene.player.maxHealth;
+      		console.log("Health: " + scene.player.maxHealth);
+      	}
+      }
+   });   
+
+   var Asteroid = enchant.Class.create(Sprite, {
+      initialize: function(x, y, maxTime) {
+         Sprite.apply(this, [109, 91]);
+         this.image = Game.instance.assets["res/images/asteroid_sheet30.png"];
+         this.x = x;
+         this.y = y;
+         this.maxTime = maxTime;
+
+         var scenery = Game.instance.currentScene.scenery;
+         scenery.addChild(this);
+
+         // Find the movement between the bullet and target
+         this.speed = 2;
+         var targetVec = new Victor(Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
+         var startVec = new Victor(x, y);
+         var movementVec = targetVec.subtract(startVec);
+         // Normalize vector to length 1 if movement is not [0, 0]
+         if (movementVec.x != 0 && movementVec.y != 0) {
+            movementVec.normalize();
+         }
+         this.movementVec = movementVec;         
+
+         this.animationDuration = 0;       // Animation timer
+         this.addEventListener('enterframe', this.update);
+      },
+
+      update: function(evt) {
+          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
+          if (this.animationDuration >= this.maxTime) {
+             if (this.frame < 30) {
+                this.frame++;
+             }
+             else {
+                this.frame = 0;
+             }
+             this.animationDuration -= 0.05;
+          }
+
+         // Move asteroid according to normalized movement vector & speedw
+         this.x += this.movementVec.x * this.speed;
+         this.y += this.movementVec.y * this.speed;          
+      }
+   });      
 }

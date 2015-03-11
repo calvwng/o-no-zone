@@ -1,9 +1,10 @@
 	Grant
-Adding HP to Player 
-HP Bar linked to Player Health
-Score Label
+Adding HP to Player ---------------------------DONE
+HP Bar linked to Player Health-----------------DONE
+Score Label------------------------------------DONE
 Wave Label
 Enemies Remaining Label
+Store screen
 
 	Scotty
 Place Tower via Mouse
@@ -12,10 +13,11 @@ Button to Continue to Next Wave from Build Phase
 
 	Ian
 Idle Animation for Player (could just scale using timeline)
-Explosion animation
 Stray debris animation for background
-Ozone cloud animation
+Find animated backgrounds (preferably rotating earth or upper atmosphere),
+ or move background based on player movement
 
 	Calvin
-Normalize bullet speeds
-Bullet Collision w/ Enemies
+Add at least 2 more enemy types and 1 boss
+Gain resources from defeating enemies
+Narrative?
