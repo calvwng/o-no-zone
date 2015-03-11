@@ -651,6 +651,20 @@ window.onload = function() {
             this.bullets.addChild(bullet);
          }
       }
+
+      //animation code (i hope) 
+     /* this.frame = 0;
+      animate: function(evt) {
+         if (frame == 5) {
+            frame = -frame;
+         }
+         if (frame >= 0) {
+            player.scale(1.05);
+         }
+         else {
+            player.scale(1 / 1.05);
+         }
+      } */
    });
 
 	// Game Over Screen
