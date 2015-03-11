@@ -11,7 +11,7 @@ window.onload = function() {
 
 	// uncomment preload line and file with images and sounds with the following format
 	// 'folder/image.png' or 'folder/sound.wav'. Just add commas to load multiples
-	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png',
+	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png', 'res/images/button-blue.png',
 				 'res/images/cell.jpg', 'res/images/chad_price_grin.png', 'res/images/controls_button.png',
 				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.jpg',
 				 'res/images/earthsorbit.jpg', 'res/images/game_over.png', 'res/images/globalwarming.jpg',
@@ -49,20 +49,43 @@ window.onload = function() {
 	//turret class that players can move, have all other turrets inherit this class
 	var Turret = Class.create(Sprite, {
 		initialize: function() {
-			var game, turret;
+			var game, turret, touching;
 
-			Sprite.apply(this,);
+			touching =false;
+
+			
+
+
+			Sprite.apply(this,[56,56]);
 
 			game= Game.instance;
 
 			turret = this;
 
-			this.addEventListener('touchstart', this.selected);
-
-		} ,
-
-		selected: function(e){
+			//event listener for when selected
+			this.addEventListener('touchstart', function(e){
+				touching = true;
+			});
+			this.addEventListener('touchend', function(e){
+				touching = false
+			});
+			this.addEventListener('enterframe', function(e){
+				
+				console.log(touching);
 			
+			});
+			document.addEventListener("mousemove", function(e){
+				var x = e.clientX;
+				var y = e.clientY;
+
+				//console.log("x : " + x + "y : " + y);
+
+				if(touching){
+					turret.x = x - turret.width/2;
+					turret.y = y - turret.width/2; 
+				}
+			});
+
 		}
 	});
 
@@ -86,9 +109,22 @@ window.onload = function() {
 
 			this.image = game.assets['res/images/idle.png'];
 
-			this.addEventListener('enterframe', function(e){
+			document.addEventListener("mousemove", function(e){
+				var x = e.clientX;
+				var y = e.clientY;
 
-				//defining friction of the player with the ground
+				//console.log("x : " + x + "y : " + y);
+
+				var angle = Math.atan2(y - player.y, x - player.x);
+           			angle = angle * (180/Math.PI);
+
+           			player.rotation = 90 + angle;
+			});
+
+			this.addEventListener('enterframe', this.movement);
+		}, 
+		movement: function(){
+			//defining friction of the player with the ground
 				var friction_x = 0;
 				var friction_y = 0;
 				if(this.vx > 0.2) {
@@ -127,39 +163,7 @@ window.onload = function() {
 
             	this.x += this.vx;
             	this.y += this.vy;
-
-            	document.onmousemove = handleMouseMove;
-       			function handleMouseMove(event) {
-           			var dot, eventDoc, doc, body, pageX, pageY;
-
-           			event = event || window.event; // IE-ism
-
-   			        // If pageX/Y aren't available and clientX/Y are,
-   			        // calculate pageX/Y - logic taken from jQuery.
-   			        if (event.pageX == null && event.clientX != null) {
-   			            eventDoc = (event.target && event.target.ownerDocument) || document;
-   			            doc = eventDoc.documentElement;
-   			            body = eventDoc.body;
-
-   			            event.pageX = event.clientX +
-   			              (doc && doc.scrollLeft || body && body.scrollLeft || 0) -
-   			              (doc && doc.clientLeft || body && body.clientLeft || 0);
-   			            event.pageY = event.clientY +
-   			              (doc && doc.scrollTop  || body && body.scrollTop  || 0) -
-   			              (doc && doc.clientTop  || body && body.clientTop  || 0 );
-   			        }
-           			// console.log("mouse x : " + event.pageX + "mouse y : " + event.pageY)
-
-                  mouseX = event.pageX;
-                  mouseY = event.pageY;
-
-           			var angle = Math.atan2(event.pageY - player.y, event.pageX - player.x);
-           			angle = angle * (180/Math.PI);
-
-           			player.rotation = 90 + angle;
-       			}
-			});
-		},
+		} 
 
 	});
 
@@ -317,7 +321,7 @@ window.onload = function() {
 		initialize: function() {
 		    Scene.apply(this);
 
-		    var game, bg, enemies, bullets, i, player;
+		    var game, bg, enemies, bullets, i, player, turret;
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
           var pauseLabel;
@@ -341,6 +345,11 @@ window.onload = function() {
 		    player.y = 40;
           this.player = player;
 
+          //testing turret 
+          turret = new Turret();
+          turret.image = game.assets['res/images/button-blue.png'];
+          turret.x = 100;
+          turret.y = 100;
           // Create the pause label
           pauseLabel = new Label('PAUSED');
           pauseLabel.x = 250;
@@ -354,6 +363,7 @@ window.onload = function() {
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
+		    this.addChild(turret);
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -394,8 +404,8 @@ window.onload = function() {
          // If not paused && mouse is within game bounds
          if (!this.paused && evt.x < 800 && evt.y < 600) {
             // Spawn a bullet moving in line towards mouse
-            var bullet = new Bullet(this.player.x, this.player.y, mouseX, mouseY);
-            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
+            var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
+            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
