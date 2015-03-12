@@ -25,7 +25,7 @@ window.onload = function() {
              "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
              "res/images/boomerang_bullet.png", "res/images/beams.png", "res/images/powers.png", "res/images/PU_speed.png",
-             "res/images/PU_health.png");
+             "res/images/PU_health.png", "res/images/turret_shooting.png", "res/images/turret_grid.png", "res/images/finish_build_button.png");
 
    // Setup Soundmanager2.js
    soundManager.setup({
@@ -78,14 +78,20 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
+	
+
 	//turret class that players can move, have all other turrets inherit this class
 	var Turret = Class.create(Sprite, {
-		initialize: function() {
-			var game, turret, touching;
+		initialize: function(type) {
+			var game, turret, touching, moveable, active, cost, mouseX, mouseY;
 
-			touching =false;
+			this.touching = false;
+			this.moveable = false;
+			this.active = false;
+			this.cost = 10;
 
-			Sprite.apply(this,[56,56]);
+
+			Sprite.apply(this,[70,70]);
 
 			game= Game.instance;
 
@@ -93,27 +99,34 @@ window.onload = function() {
 
 			//event listener for when selected
 			this.addEventListener('touchstart', function(e){
-				touching = true;
+				this.touching = true;
 			});
 			this.addEventListener('touchend', function(e){
-				touching = false
+				this.touching = false;
 			});
 			this.addEventListener('enterframe', function(e){
-				
-				// console.log(touching);
-			
-			});
-			document.addEventListener("mousemove", function(e){
-				var x = e.clientX;
-				var y = e.clientY;
-
-				//console.log("x : " + x + "y : " + y);
 
 
-				if(touching){
-					turret.x = x - turret.width/2;
-					turret.y = y - turret.width/2; 
+				if(active){
+					if(type == "dumb"){
+						this.rotation += 5;
+					}	
+					this.rotation += 5;
 				}
+
+				if(this.touching && this.moveable){
+					
+					this.x = this.mouseX - this.width/2;
+					this.y = this.mouseY - this.width/2; 
+				}
+
+				
+
+			});
+
+			document.addEventListener("mousemove", function(e){
+				turret.mouseX = e.clientX;
+				turret.mouseY = e.clientY;
 			});
 
 		}
@@ -151,10 +164,6 @@ window.onload = function() {
 				player.mouseX = e.clientX;
 				player.mouseY = e.clientY;
 
-				var angle = Math.atan2(player.mouseY - this.y, player.mouseX - this.x);
-           	angle = angle * (180/Math.PI);
-
-           	player.rotation = 90 + angle;
 			});
 
 			this.addEventListener('enterframe', this.update);
@@ -340,7 +349,31 @@ window.onload = function() {
 		    //AllPowerUps.addChild(turretsPU);
 		    //AllPowerUps.addChild(meteorsPU);
 
-			game.replaceScene(new Level(player, 3, AllPowerUps));
+		    var turret = new Turret("dumb");
+            turret.image = game.assets['res/images/turret_shooting.png'];
+            turret.x = 725;
+          	turret.y = 20;
+
+          	var turret2 = new Turret("dumb");
+            turret2.image = game.assets['res/images/turret_shooting.png'];
+            turret2.x = 725;
+          	turret2.y = 120;
+
+          	var turret3 = new Turret("dumb");
+            turret3.image = game.assets['res/images/turret_shooting.png'];
+            turret3.x = 725;
+          	turret3.y = 220;
+
+
+
+		    AllTurrets = new Group();
+		    AllTurrets.addChild(turret);
+		    AllTurrets.addChild(turret2);
+		    AllTurrets.addChild(turret3);
+
+		    
+
+			game.replaceScene(new Level(player, 3, AllPowerUps, AllTurrets));
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -412,7 +445,7 @@ window.onload = function() {
 	* Level Game Logic
 	*/
 	var Level = Class.create (Scene, {
-		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg, turretsArg) {
 		    Scene.apply(this);
 
 		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
@@ -428,6 +461,10 @@ window.onload = function() {
 		    player = playerArg;
 		    this.player = playerArg;
 		    this.powerups = powerupsArg;
+
+
+		    this.turrets = turretsArg;
+
 		    this.store = false;
 		    game = Game.instance;
 
@@ -456,12 +493,7 @@ window.onload = function() {
 		    this.scoreDisplay = scoreDisplay;
 
           this.player = player;
-
-          //testing turret 
-          turret = new Turret();
-          turret.image = game.assets['res/images/button-blue.png'];
-          turret.x = 100;
-          turret.y = 100;
+          
 
           // Create the pause label
           pauseLabel = new Label('PAUSED');
@@ -490,7 +522,13 @@ window.onload = function() {
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 		    this.addChild(scoreDisplay);
-		    this.addChild(turret);
+
+		    //adds a turret only if it is active
+		    for(var i=0; i <  this.turrets.childNodes.length; i++){
+		    	if(this.turrets.childNodes[i].active){
+		    		this.addChild(this.turrets.childNodes[i]);
+		    	}
+		    }
 
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
@@ -559,7 +597,7 @@ window.onload = function() {
          }
 
 			if (this.enemiesKilled >= this.maxEnemies) {
-				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups));
+				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups, this.turrets));
 			}
 		},
 
@@ -580,7 +618,7 @@ window.onload = function() {
 
       touchHandler: function(evt) {
          // If not paused && mouse is within game bounds
-         if (!this.paused && evt.x < 800 && evt.y < 600) {
+         if (!this.paused && evt.x < 800 && evt.y < 600 ) {
             // Spawn a bullet moving in line towards mouse
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
             var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
@@ -595,7 +633,7 @@ window.onload = function() {
 	* Store level for upgrades
 	*/
 	var Store = Class.create (Scene, {
-		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg, turretsArg) {
 		    Scene.apply(this);
 
 		    var game, bg, bullets, player, enemies, i, scoreDisplay;
@@ -603,6 +641,8 @@ window.onload = function() {
 
           	var pauseLabel;
           	this.paused = false;
+
+          	this.turrets = turretsArg;
 
 		    player = playerArg;
 		    this.player = playerArg;
@@ -636,10 +676,10 @@ window.onload = function() {
 
           this.player = player;
 
-          for (i = 0; i < powerups.length; i++) {
+          for (i = 0; i < powerups.childNodes.length; i++) {
 
-          	if (this.player.score >= powerups[i].ozoneLevel) {
-          		powerups[i].unlocked = true;
+          	if (this.player.score >= powerups.childNodes[i].cost) {
+          		powerups.childNodes[i].unlocked = true;
           	}
 
           }
@@ -690,6 +730,160 @@ window.onload = function() {
 
 		update: function() {
 
+		},
+
+      // Currently bound to 'SHIFT' key, for pausing
+      bHandler: function(evt) {
+          var game = Game.instance;
+
+          if (this.paused == true) {
+             game.resume();
+             this.removeChild(this.pauseLabel);        
+          }
+          else {
+             game.pause();
+             this.addChild(this.pauseLabel);
+          }
+          this.paused = !this.paused;
+      },      
+
+      touchHandler: function(evt) {
+         // If not paused && mouse is within game bounds
+         if (!this.paused && evt.x < 800 && evt.y < 600) {
+            // Spawn a bullet moving in line towards mouse
+            var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
+            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
+            var degrees = (radians/Math.PI) * 180;
+            bullet.rotation = degrees + 90;     
+            this.bullets.addChild(bullet);
+         }
+      }
+   });
+
+     // build scene used to plasce turrets
+	var Build = Class.create (Scene, {
+		initialize: function(playerArg, maxEnemiesArg, powerupsArg, turretsArg) {
+		    Scene.apply(this);
+
+		    var game, bg, bullets, player, enemies, i, scoreDisplay;
+		    var maxEnemies = maxEnemiesArg;
+
+          	var pauseLabel;
+          	this.paused = false;
+
+          	this.turrets = turretsArg;
+
+          	
+
+          	game = Game.instance;
+
+          	this.player = playerArg;
+
+
+		    bg = new Sprite(800, 600);
+		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+
+		    enemies = new Group();
+		    this.enemies = enemies;
+		    this.maxEnemies = maxEnemies;
+		    this.enemiesKilled = 0;
+
+          	bullets = new Group();
+          	this.bullets = bullets;
+
+          	buildLabel = new Label("BUILD LEVEL");
+		    buildLabel.x = 300;
+		    buildLabel.y = 10;
+		    buildLabel.color = 'white';
+		    buildLabel.font = 'bold 14px sans-serif';
+		    buildLabel.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
+
+
+		    var finishBuildButton = new Sprite (149, 39);
+		    finishBuildButton.image = game.assets['res/images/finish_build_button.png'];
+		    finishBuildButton.x = 20;
+		    finishBuildButton.y = 20;
+
+
+		    scoreDisplay = new Label("Ozone Recovered: " + this.player.score);
+		    scoreDisplay.x = 300;
+		    scoreDisplay.y = 30;
+		    scoreDisplay.color = 'white';
+		    scoreDisplay.font = 'bold 14px sans-serif';
+		    scoreDisplay.textAlign = 'center';
+		    this.scoreDisplay = scoreDisplay;
+
+		    var turret_grid = new Sprite(90, 600);
+		    turret_grid.image = game.assets['res/images/turret_grid.png'];
+		    turret_grid.x = game.width - 90;
+		    turret_grid.y += 5;
+
+		    this.turret_grid = turret_grid;
+
+		    var hudbar = new Sprite(300, 100);
+		    hudbar.image = game.assets['res/images/portrait_idle.png'];
+		    hudbar.x = 0;
+		    hudbar.y = 450;
+  
+  			//console.log("touching : " + this.turrets.childNodes[0].touching);
+
+		    
+
+          // Create the pause label
+          pauseLabel = new Label('PAUSED');
+          pauseLabel.x = 250;
+          pauseLabel.y = 250;
+          pauseLabel.color = 'red';
+          pauseLabel.font = 'bold 32px sans-serif';
+          pauseLabel.textAlign = 'center';
+          this.pauseLabel = pauseLabel;
+
+          // Experimental Ozone cloud sprite for future gameplay mechanics
+          ozoneGroup = new Group();
+          this.ozoneGroup = ozoneGroup;
+          var ozoneCloud = new Ozone(300, 300);
+          ozoneGroup.addChild(ozoneCloud);
+
+          // Group for scenery sprites and effects
+          scenery = new Group();
+          this.scenery = scenery;
+
+		    this.addChild(bg);
+          
+          this.addChild(ozoneGroup);
+		    this.addChild(buildLabel);
+		    this.addChild(scoreDisplay);
+		    this.addChild(turret_grid);
+		    this.addChild(hudbar);
+		    this.addChild(this.turrets);
+		    this.addChild(finishBuildButton);
+
+		    this.tl.setTimeBased();
+		    this.addEventListener(Event.ENTER_FRAME, this.update);
+          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
+          this.addEventListener(Event.TOUCH_START, this.touchHandler);
+
+          finishBuildButton.addEventListener(Event.TOUCH_END, function () {
+          	game.replaceScene(new Level(Game.instance.currentScene.player, maxEnemies, powerupsArg, Game.instance.currentScene.turrets));
+          })
+ 
+		},
+
+		update: function() {
+			for(var i=0; i<this.turrets.childNodes.length; i++){
+          		if(this.turrets.childNodes[i].cost < this.player.score){
+          			this.turrets.childNodes[i].moveable = true;
+          		}
+
+          		if((this.turrets.childNodes[i].x + this.turrets.childNodes[i].width) < this.turret_grid.x){
+          			this.turrets.childNodes[i].active = true;
+          		}else{
+          			this.turrets.childNodes[i].active = false;
+          		}
+          	}
+
+          	console.log(this.turrets.childNodes[0].active);
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -834,16 +1028,19 @@ window.onload = function() {
 
          	var powerups = scene.powerups;
 
+
          	for (i = 0; i < powerups.childNodes.length; i++) {
          		var pUp = powerups.childNodes[i];
 
-         		if (this.within (pUp, 32)) {
+         		if (this.within (pUp, 50)) {
          			if (pUp.unlocked && pUp.unpurchased) {
          				pUp.unpurchased = false;
          				pUp.takeEffect(pUp.powerType);
          				this.parentNode.removeChild(this);
-         				// console.log ("CONTACT");
-         				game.replaceScene(new Level(scene.player, scene.maxEnemies * 2, powerups));
+
+         				//console.log ("CONTACT");
+         				game.replaceScene(new Build(scene.player, scene.maxEnemies * 2, powerups, scene.turrets));
+
          			}
          		}
          	}
@@ -963,9 +1160,9 @@ window.onload = function() {
          this.x = 150;
          this.y = 300;
 
-         this.ozoneLevel = 10;
+         this.cost = 10;
          this.unpurchased = true;
-         this.unlocked = true;
+         this.unlocked = false;
       },
 
       takeEffect: function(powerType) {
