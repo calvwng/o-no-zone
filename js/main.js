@@ -478,6 +478,7 @@ window.onload = function() {
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
 
+          this.asteroidTimer = 5000 + Math.floor(Math.random() * 5000);
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
@@ -514,7 +515,7 @@ window.onload = function() {
          });          
 		},
 
-		update: function() {
+		update: function(evt) {
          //-- Spawn SpinnerEnemy every 1000 ms
          this.tl.delay(1000).then(function() {
             // Limit enemies on screen to 10
@@ -524,15 +525,16 @@ window.onload = function() {
                this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
             }
          });
-			// console.log("1000 ms interval tick.")
 
-         // //-- TODO: CONCURRENTLY spawn a new asteroid after 5 + (0 to 10) seconds
-         // //         Probably do this by NOT using same "tl", otherwise the delays stack on each other...
-         // this.tl.delay(5000 + Math.floor(Math.random() * 10000)).then(function() {
-         //    var asteroidX = Math.floor(Math.random() * 2) ? -50 : 850;
-         //    var asteroidY = Math.floor(Math.random() * 600);
-         //    new Asteroid(asteroidX, asteroidY, 0.5);
-         // });            
+         //-- Spawn a new asteroid after 5 + (0 to 5) seconds
+         this.asteroidTimer -= evt.elapsed;
+         // console.log("asteroidTimer: " + this.asteroidTimer);
+         if (this.asteroidTimer <= 0) {
+            var asteroidX = Math.floor(Math.random() * 2) ? -50 : 850;
+            var asteroidY = Math.floor(Math.random() * 600);
+            new Asteroid(asteroidX, asteroidY, 0.5);
+            this.asteroidTimer = 5000 + Math.floor(Math.random() * 5000);
+         };            
 
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
 
