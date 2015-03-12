@@ -140,6 +140,7 @@ window.onload = function() {
 
 			this.addEventListener('enterframe', this.movement);
 		}, 
+
 		movement: function(){
 
 			//console.log("x : " + this.mouseX + "y : " + this.mouseY);
@@ -147,54 +148,48 @@ window.onload = function() {
 			var angle = Math.atan2(this.mouseY - this.y, this.mouseX - this.x);
            	angle = angle * (180/Math.PI);
 
-           	
-
-           	this.rotation = 90 + angle;
-
-           	
+         this.rotation = 90 + angle;
 
 			//defining friction of the player with the ground
-				var friction_x = 0;
-				var friction_y = 0;
-				if(this.vx > 0.2) {
-					friction_x = -0.2;
-				} else if(this.vx > 0){
-					friction_x = -this.vx;
-				}
-				if(this.vx < -0.2){
-					friction_x = 0.2;
-				} else if(this.vx < 0 ){
-					friction_x = -this.vx;
-				}
-				if(this.vy > 0.2) {
-					friction_y = -0.2;
-				} else if(this.vy > 0){
-					friction_y = -this.vy;
-				}
-				if(this.vy < -0.2){
-					friction_y = 0.2;
-				} else if(this.vy < 0 ){
-					friction_y = -this.vy;
-				}
+			var friction_x = 0;
+			var friction_y = 0;
+			if(this.vx > 0.2) {
+				friction_x = -0.2;
+			} else if(this.vx > 0){
+				friction_x = -this.vx;
+			}
+			if(this.vx < -0.2){
+				friction_x = 0.2;
+			} else if(this.vx < 0 ){
+				friction_x = -this.vx;
+			}
+			if(this.vy > 0.2) {
+				friction_y = -0.2;
+			} else if(this.vy > 0){
+				friction_y = -this.vy;
+			}
+			if(this.vy < -0.2){
+				friction_y = 0.2;
+			} else if(this.vy < 0 ){
+				friction_y = -this.vy;
+			}
 
-				this.ax = 0;
-				this.ay = 0;
+			this.ax = 0;
+			this.ay = 0;
 
-				//checking the input of the user
-				if (game.input.left) this.ax -= 0.5 * this.speed;
-         	if (game.input.right) this.ax += 0.5 * this.speed;
-         	if (game.input.up) this.ay -= 0.5 * this.speed;
-         	if (game.input.down) this.ay += 0.5 * this.speed;
-         	this.vx += this.ax + friction_x;
-         	this.vy += this.ay + friction_y; 
-         	this.vx = Math.min(Math.max(this.vx, -10), 10);
-         	this.vy = Math.min(Math.max(this.vy, -10), 10);
+			//checking the input of the user
+			if (game.input.left) this.ax -= 0.5 * this.speed;
+      	if (game.input.right) this.ax += 0.5 * this.speed;
+      	if (game.input.up) this.ay -= 0.5 * this.speed;
+      	if (game.input.down) this.ay += 0.5 * this.speed;
+      	this.vx += this.ax + friction_x;
+      	this.vy += this.ay + friction_y; 
+      	this.vx = Math.min(Math.max(this.vx, -10), 10);
+      	this.vy = Math.min(Math.max(this.vy, -10), 10);
 
-         	this.x += this.vx;
-         	this.y += this.vy;
-
-         
-		},
+      	this.x += this.vx;
+      	this.y += this.vy;
+	   }
 	}); // END Player
 
 	/**
