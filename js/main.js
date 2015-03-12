@@ -132,6 +132,8 @@ window.onload = function() {
 			//refference to current player
 			player = this;
 			health = maxHealth = 100;
+         this.vulnerable = true;
+         this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
 			score = 0;
 			speed = 1;
 			this.speed = speed;
@@ -155,13 +157,31 @@ window.onload = function() {
            	player.rotation = 90 + angle;
 			});
 
-			this.addEventListener('enterframe', this.movement);
+			this.addEventListener('enterframe', this.update);
 		}, 
 
-		movement: function(){
+		update: function() {
+         //-- Check player collision with enemy
+         var enemies = Game.instance.currentScene.enemies;
+         for (var i = 0; this.vulnerable == true && i < enemies.childNodes.length; i++) {
+            if (this.within(enemies.childNodes[i], 32)) {
+               this.vulnerable = false;
+               this.health -= 10;
+
+               // Fade out and in to denote damage and temporary invlunerability
+               for (var f = 0; f < 3; f++) { 
+                 this.tl.fadeOut(5);
+                 this.tl.fadeIn(5);                  
+               }               
+               this.tl.delay(15).then(function() {
+                  this.vulnerable = !this.vulnerable;
+               });
+               console.log("Player health reduced to :" + this.health);
+               break;
+            }
+         }
 
 			//console.log("x : " + this.mouseX + "y : " + this.mouseY);
-
 			var angle = Math.atan2(this.mouseY - this.y, this.mouseX - this.x);
            	angle = angle * (180/Math.PI);
 
@@ -475,6 +495,7 @@ window.onload = function() {
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
 		     var context = canvas.getContext('2d');
+           this.context = context;
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
 
@@ -483,36 +504,6 @@ window.onload = function() {
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
-
-          // health positioning is kinda janky, also for now just on an event listener
-           this.addEventListener(Event.TOUCH_END, function() {
-           	if (!this.paused) {
-              player.health -= 10;
-
-              // Clear the canvas
-              canvas.width = canvas.width;
-              // Calculate health
-              var percent = player.health/player.maxHealth;
-              context.fillStyle = "black";
-              context.fillRect(0, 0, 120, 28);
-              if (percent > 0.5) {
-                 context.fillStyle = "Green";
-              }
-              else if (percent > 0.3) {
-                 context.fillStyle = "Yellow";
-              }
-              else {
-                 context.fillStyle = "Red";
-              }
-              //Fill in bar position - x, y, width, height
-              if (percent > 0) {
-                 context.fillRect(0, 0, 120 * percent, 28);
-              }
-              else {
-                 context.fillRect(0, 0, 0, 28);
-              }
-             }
-         });          
 		},
 
 		update: function(evt) {
@@ -537,6 +528,35 @@ window.onload = function() {
          };            
 
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
+
+         //-- Update health bar
+         if (!this.paused) {
+             // player.health -= 10;
+
+             // Clear the canvas
+             canvas.width = canvas.width;
+             // Calculate health
+             var percent = this.player.health/this.player.maxHealth;
+             var context = this.context;
+             context.fillStyle = "black";
+             context.fillRect(0, 0, 120, 28);
+             if (percent > 0.5) {
+                context.fillStyle = "Green";
+             }
+             else if (percent > 0.3) {
+                context.fillStyle = "Yellow";
+             }
+             else {
+                context.fillStyle = "Red";
+             }
+             //Fill in bar position - x, y, width, height
+             if (percent > 0) {
+                context.fillRect(0, 0, 120 * percent, 28);
+             }
+             else {
+                context.fillRect(0, 0, 0, 28);
+             }
+         }
 
 			if (this.enemiesKilled >= this.maxEnemies) {
 				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups));
