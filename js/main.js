@@ -11,7 +11,7 @@ window.onload = function() {
 
 	// uncomment preload line and file with images and sounds with the following format
 	// 'folder/image.png' or 'folder/sound.wav'. Just add commas to load multiples
-	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png', 'res/images/button-blue.png',
+	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png',
 				 'res/images/cell.jpg', 'res/images/chad_price_grin.png', 'res/images/controls_button.png',
 				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.jpg',
 				 'res/images/earthsorbit.jpg', 'res/images/game_over.png', 'res/images/globalwarming.jpg',
@@ -53,45 +53,20 @@ window.onload = function() {
 	//turret class that players can move, have all other turrets inherit this class
 	var Turret = Class.create(Sprite, {
 		initialize: function() {
-			var game, turret, touching;
+			var game, turret;
 
-
-			touching =false;
-
-			
-
-
-			Sprite.apply(this,[56,56]);
+			Sprite.apply(this, [50, 50]); // temporary dimensions until an image is found for it
 
 			game= Game.instance;
 
 			turret = this;
 
-			//event listener for when selected
-			this.addEventListener('touchstart', function(e){
-				touching = true;
-			});
-			this.addEventListener('touchend', function(e){
-				touching = false
-			});
-			this.addEventListener('enterframe', function(e){
-				
-				console.log(touching);
+			this.addEventListener('touchstart', this.selected);
+
+		},
+
+		selected: function(e){
 			
-			});
-			document.addEventListener("mousemove", function(e){
-				var x = e.clientX;
-				var y = e.clientY;
-
-				//console.log("x : " + x + "y : " + y);
-
-
-				if(touching){
-					turret.x = x - turret.width/2;
-					turret.y = y - turret.width/2; 
-				}
-			});
-
 		}
 	});
 
@@ -120,22 +95,9 @@ window.onload = function() {
 
 			this.image = game.assets['res/images/idle.png'];
 
-			document.addEventListener("mousemove", function(e){
-				var x = e.clientX;
-				var y = e.clientY;
+			this.addEventListener('enterframe', function(e){
 
-				//console.log("x : " + x + "y : " + y);
-
-				var angle = Math.atan2(y - player.y, x - player.x);
-           			angle = angle * (180/Math.PI);
-
-           			player.rotation = 90 + angle;
-			});
-
-			this.addEventListener('enterframe', this.movement);
-		}, 
-		movement: function(){
-			//defining friction of the player with the ground
+				//defining friction of the player with the ground
 				var friction_x = 0;
 				var friction_y = 0;
 				if(this.vx > 0.2) {
@@ -208,7 +170,6 @@ window.onload = function() {
          }); // END anonymous 'enterframe event listener'
 		},
 	}); // END Player
-
 
 	/**
 	* SpinnerEnemy class
@@ -384,9 +345,7 @@ window.onload = function() {
 		initialize: function(playerArg, maxEnemiesArg, powerupsArg) {
 		    Scene.apply(this);
 
-
 		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
-
 		    var enemySpawnSec = 2000; // ms
 		    var maxSpinners = 10;
 		    var maxEnemies = maxEnemiesArg;
@@ -428,11 +387,6 @@ window.onload = function() {
 
           this.player = player;
 
-          //testing turret 
-          turret = new Turret();
-          turret.image = game.assets['res/images/button-blue.png'];
-          turret.x = 100;
-          turret.y = 100;
           // Create the pause label
           pauseLabel = new Label('PAUSED');
           pauseLabel.x = 250;
@@ -456,9 +410,6 @@ window.onload = function() {
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
-
-		    this.addChild(turret);
-
           this.addChild(scenery);
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
@@ -469,7 +420,6 @@ window.onload = function() {
 		     var context = canvas.getContext('2d');
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
-
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -517,14 +467,6 @@ window.onload = function() {
 					this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
 				}
 				// console.log("1000 ms interval tick.")
-
-            //-- TODO: CONCURRENTLY spawn a new asteroid after 5 + (0 to 10) seconds
-            //         Probably do this by NOT using same "tl", otherwise the delays stack on each other...
-            // this.tl.delay(5000 + Math.floor(Math.random() * 10000)).then(function() {
-            //    var asteroidX = Math.floor(Math.random() * 2) ? -50 : 850;
-            //    var asteroidY = Math.floor(Math.random() * 600);
-            //    new Asteroid(asteroidX, asteroidY, 0.5);
-            // });            
 			});
 
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;;
@@ -554,7 +496,7 @@ window.onload = function() {
          if (!this.paused && evt.x < 800 && evt.y < 600) {
             // Spawn a bullet moving in line towards mouse
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
-            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
+            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
@@ -683,28 +625,12 @@ window.onload = function() {
          if (!this.paused && evt.x < 800 && evt.y < 600) {
             // Spawn a bullet moving in line towards mouse
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
-
-            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
-
+            var radians = Math.atan2(mouseY - bullet.y, mouseX - bullet.x);
             var degrees = (radians/Math.PI) * 180;
             bullet.rotation = degrees + 90;     
             this.bullets.addChild(bullet);
          }
       }
-
-      //animation code (i hope) 
-     /* this.frame = 0;
-      animate: function(evt) {
-         if (frame == 5) {
-            frame = -frame;
-         }
-         if (frame >= 0) {
-            player.scale(1.05);
-         }
-         else {
-            player.scale(1 / 1.05);
-         }
-      } */
    });
 
 	// Game Over Screen
@@ -923,48 +849,4 @@ window.onload = function() {
       	}
       }
    });   
-
-   var Asteroid = enchant.Class.create(Sprite, {
-      initialize: function(x, y, maxTime) {
-         Sprite.apply(this, [109, 91]);
-         this.image = Game.instance.assets["res/images/asteroid_sheet30.png"];
-         this.x = x;
-         this.y = y;
-         this.maxTime = maxTime;
-
-         var scenery = Game.instance.currentScene.scenery;
-         scenery.addChild(this);
-
-         // Find the movement between the bullet and target
-         this.speed = 2;
-         var targetVec = new Victor(Math.floor(Math.random() * 800), Math.floor(Math.random() * 600));
-         var startVec = new Victor(x, y);
-         var movementVec = targetVec.subtract(startVec);
-         // Normalize vector to length 1 if movement is not [0, 0]
-         if (movementVec.x != 0 && movementVec.y != 0) {
-            movementVec.normalize();
-         }
-         this.movementVec = movementVec;         
-
-         this.animationDuration = 0;       // Animation timer
-         this.addEventListener('enterframe', this.update);
-      },
-
-      update: function(evt) {
-          this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
-          if (this.animationDuration >= this.maxTime) {
-             if (this.frame < 30) {
-                this.frame++;
-             }
-             else {
-                this.frame = 0;
-             }
-             this.animationDuration -= 0.05;
-          }
-
-         // Move asteroid according to normalized movement vector & speedw
-         this.x += this.movementVec.x * this.speed;
-         this.y += this.movementVec.y * this.speed;          
-      }
-   });      
 }
