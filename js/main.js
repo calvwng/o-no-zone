@@ -25,7 +25,8 @@ window.onload = function() {
              "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png",
              "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
-             "res/images/boomerang_bullet.png", "res/images/beams.png");
+             "res/images/boomerang_bullet.png", "res/images/beams.png", "res/images/powers.png", "res/images/PU_speed.png",
+             "res/images/PU_health.png");
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -72,7 +73,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game, player, health, maxHealth, score;
+			var game, player, health, maxHealth, score, speed;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -82,6 +83,8 @@ window.onload = function() {
 			player = this;
 			health = maxHealth = 100;
 			score = 0;
+			speed = 1;
+			this.speed = speed;
 
 
 			//initialize player velocity and acceleration (used for momentum)
@@ -122,10 +125,10 @@ window.onload = function() {
 				this.ay = 0;
 
 				//checking the input of the user
-				if (game.input.left) this.ax -= 0.5;
-         	if (game.input.right) this.ax += 0.5;
-         	if (game.input.up) this.ay -= 0.5;
-         	if (game.input.down) this.ay += 0.5;
+				if (game.input.left) this.ax -= 0.5 * this.speed;
+         	if (game.input.right) this.ax += 0.5 * this.speed;
+         	if (game.input.up) this.ay -= 0.5 * this.speed;
+         	if (game.input.down) this.ay += 0.5 * this.speed;
          	this.vx += this.ax + friction_x;
          	this.vy += this.ay + friction_y; 
          	this.vx = Math.min(Math.max(this.vx, -10), 10);
@@ -252,12 +255,20 @@ window.onload = function() {
 		    player.health = player.maxHealth = 100;
 		    player.score = 0;
 
+		    var speedPU = new PowerUp();
+		    speedPU.powerType = "speed";
+		    speedPU.image = game.assets['res/images/PU_speed.png'];
+
 		    var healthPU = new PowerUp();
 		    healthPU.powerType = "health";
-		    healthPU.image = game.assets['res/images/beams.png'];
+		    healthPU.image = game.assets['res/images/PU_health.png'];
+		    healthPU.x = 550;
 
 		    AllPowerUps = new Group();
+		    AllPowerUps.addChild(speedPU);
 		    AllPowerUps.addChild(healthPU);
+		    //AllPowerUps.addChild(turretsPU);
+		    //AllPowerUps.addChild(meteorsPU);
 
 			game.replaceScene(new Level(player, 3, AllPowerUps));
 		},
@@ -568,6 +579,7 @@ window.onload = function() {
           this.scenery = scenery;
 
 		    this.addChild(bg);
+		    this.addChild(powerups);
           this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(player);
@@ -575,7 +587,6 @@ window.onload = function() {
           this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 		    this.addChild(scoreDisplay);
-		    this.addChild(powerups);
 
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
@@ -813,25 +824,28 @@ window.onload = function() {
 
       initialize: function() {
 
-         Sprite.apply(this, [20, 20]);
+         Sprite.apply(this, [100, 100]);
          //this.image = Game.instance.assets["beams.png"];
-         this.x = 100;
-         this.y = 100;
+         this.x = 150;
+         this.y = 300;
 
          this.ozoneLevel = 10;
          this.unpurchased = true;
          this.unlocked = true;
-
       },
 
       takeEffect: function(powerType) {
 
-      	if (powerType == "health") {
+      	var scene = Game.instance.currentScene;
 
-      		var scene = Game.instance.currentScene;
+      	if (powerType == "health") {
       		scene.player.maxHealth *= 2;
       		scene.player.health = scene.player.maxHealth;
-      		console.log("Health: " + scene.player.maxHealth);
+      	}
+
+      	if (powerType == "speed") {
+
+      		scene.player.speed *= 3;
       	}
       }
    });   
