@@ -19,5 +19,17 @@ Find animated backgrounds (preferably rotating earth or upper atmosphere),
 Narrative?
 
 	Calvin
-Add at least 2 more enemy types and 1 boss
-Add sound effects
+Add at least 2 more enemy types
+Add more sound effects?
+Make enemies spawn from offscreen first like asteroids
+Fix bug of only 1 being selectable
+Maybe reduce enemy sprite size for more screen real estate
+
+
+   Misc. Ideas
+Turret types:
+ 1. immobile, shoots in 1 direction
+ 2. immobile, attacks in limited range
+ 3. immobile, attacks in user adjustable range
+ 4. immobile, attacks in 360 degree range
+ 5. immobile, spawns an o-zone cloud to attract enemies for easy shooting
