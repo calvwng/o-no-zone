@@ -20,13 +20,41 @@ window.onload = function() {
 				 'res/images/portrait_nearDeath.png', 'res/images/restart_button.png', 'res/images/space_bg.jpeg',
 				 'res/images/space_bg2.jpeg', 'res/images/space_bg3.jpeg', 'res/images/spacebar.png',
 				 'res/images/Spaceship-Drakir6.png', 'res/images/start_button.png', 'res/images/wasd.png',
-				 'res/images/winning.png', 'res/sounds/blast.wav', 'res/sounds/crunch.wav', 'res/sounds/enemyDie.wav',
-				 'res/sounds/failure.wav', 'res/sounds/grunt.wav', 'res/sounds/ufo.mp3', "res/images/winning.png", 
+				 'res/images/winning.png', "res/images/winning.png", 
              "res/images/game_over.png", "res/images/restart_button.png", "res/images/Smoke30Frames_0.png",
              "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
              "res/images/boomerang_bullet.png", "res/images/beams.png", "res/images/powers.png", "res/images/PU_speed.png",
              "res/images/PU_health.png");
+
+   // Setup Soundmanager2.js
+   soundManager.setup({
+     // where to find flash audio SWFs, if any
+     url: '',
+     debugMode: false,
+     onready: function() {
+       // Preload sounds
+       Game.instance.soundBlast = soundManager.createSound({
+         url: 'res/sounds/blast.wav'
+       });
+       Game.instance.soundCrunch = soundManager.createSound({
+         url: 'res/sounds/crunch.wav'
+       });
+       Game.instance.soundEnemyDie = soundManager.createSound({
+         url: 'res/sounds/enemyDie.wav'
+       });
+       Game.instance.soundFailure = soundManager.createSound({
+         url: 'res/sounds/failure.wav'
+       });
+       Game.instance.soundGrunt = soundManager.createSound({
+         url: 'res/sounds/grunt.wav'
+       });
+       Game.instance.soundUfo = soundManager.createSound({
+         url: 'res/sounds/ufo.mp3'
+       });
+       console.log("Sounds preloaded!");                    
+     }
+   });
 
 	// Basic game settings, feel free to change.
 	game.fps = 30;
@@ -72,7 +100,7 @@ window.onload = function() {
 			});
 			this.addEventListener('enterframe', function(e){
 				
-				console.log(touching);
+				// console.log(touching);
 			
 			});
 			document.addEventListener("mousemove", function(e){
@@ -258,6 +286,11 @@ window.onload = function() {
 		// Loads the first level if Start button is clicked
 		playGame: function(evt) {
 			var game = Game.instance;
+         game.soundUfo.play({
+                onfinish: function() {
+                   loopSound(Game.instance.soundUfo);
+                }
+         });
 			//create a new player to be passed to level
 		    var player = new Player();
 		    player.x = 40;
@@ -722,6 +755,7 @@ window.onload = function() {
       initialize: function(x, y, targetX, targetY) {
          enchant.Sprite.call(this, 46, 69);
          this.image = game.assets["res/images/beams_2.png"];
+         Game.instance.soundBlast.play();
 
          this.speed = 20; // horizontal speed
          this.x = x;
@@ -753,6 +787,7 @@ window.onload = function() {
             var enemy = enemies.childNodes[i];
             if (this.within(enemy, 32)) {
                new Explosion(enemy.x, enemy.y, 0.10);
+               Game.instance.soundEnemyDie.play();
                // enemy.tl.fadeOut(5);       // TODO: Fade & scale aren't working here
                // enemy.tl.scaleTo(0.25, 5);
                enemies.tl.delay(5).then(function() {
@@ -778,7 +813,7 @@ window.onload = function() {
          				pUp.unpurchased = false;
          				pUp.takeEffect(pUp.powerType);
          				this.parentNode.removeChild(this);
-         				console.log ("CONTACT");
+         				// console.log ("CONTACT");
          				game.replaceScene(new Level(scene.player, scene.maxEnemies * 2, powerups));
          			}
          		}
@@ -819,6 +854,7 @@ window.onload = function() {
    var Explosion = enchant.Class.create(Sprite, {
       initialize: function(x, y, maxTime) {
          Sprite.apply(this, [64, 64]);
+
          this.image = Game.instance.assets["res/images/explosion_sheet16.png"];
          this.x = x;
          this.y = y;
