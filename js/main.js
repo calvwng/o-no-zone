@@ -97,7 +97,7 @@ window.onload = function() {
 	//spaceship player Class
 	var Player = Class.create(Sprite, {
 		initialize: function(){
-			var game, player, health, maxHealth, score;
+			var game, player, health, maxHealth, score, mouseX, mouseY;
 
 			// 1 - Call superclass constructor
             Sprite.apply(this,[50, 56]);
@@ -118,20 +118,36 @@ window.onload = function() {
 			this.image = game.assets['res/images/idle.png'];
 
 			document.addEventListener("mousemove", function(e){
-				var x = e.clientX;
-				var y = e.clientY;
+				player.mouseX = e.clientX;
+				player.mouseY = e.clientY;
 
-				//console.log("x : " + x + "y : " + y);
+				var angle = Math.atan2(player.mouseY - this.y, player.mouseX - this.x);
+           		angle = angle * (180/Math.PI);
 
-				var angle = Math.atan2(y - player.y, x - player.x);
-           			angle = angle * (180/Math.PI);
+           	
 
-           			player.rotation = 90 + angle;
+           		player.rotation = 90 + angle;
+
+				
+
+				
 			});
 
 			this.addEventListener('enterframe', this.movement);
 		}, 
 		movement: function(){
+
+			//console.log("x : " + this.mouseX + "y : " + this.mouseY);
+
+			var angle = Math.atan2(this.mouseY - this.y, this.mouseX - this.x);
+           	angle = angle * (180/Math.PI);
+
+           	
+
+           	this.rotation = 90 + angle;
+
+           	
+
 			//defining friction of the player with the ground
 				var friction_x = 0;
 				var friction_y = 0;
