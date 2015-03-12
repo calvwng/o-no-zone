@@ -204,8 +204,15 @@ window.onload = function() {
       	this.vx = Math.min(Math.max(this.vx, -10), 10);
       	this.vy = Math.min(Math.max(this.vy, -10), 10);
 
-      	this.x += this.vx;
-      	this.y += this.vy;
+         // Keep Player within screen boundaries
+         var newX = this.x + this.vx;
+         var newY = this.y + this.vy;
+         if (newX >= 0 && newX < 750) {
+            this.x = newX;
+         }
+         if (newY >= 0 && newY < 550) {
+            this.y = newY;
+         }
 	   }
 	}); // END Player
 
