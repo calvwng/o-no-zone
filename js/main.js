@@ -55,11 +55,7 @@ window.onload = function() {
 		initialize: function() {
 			var game, turret, touching;
 
-
 			touching =false;
-
-			
-
 
 			Sprite.apply(this,[56,56]);
 
@@ -101,9 +97,8 @@ window.onload = function() {
 
 			var game, player, health, maxHealth, score, speed, mouseX, mouseY;
 
-
 			// 1 - Call superclass constructor
-            Sprite.apply(this,[50, 56]);
+         Sprite.apply(this,[50, 56]);
 			//get an instance of the game
 			game = Game.instance;
 			//refference to current player
@@ -127,15 +122,9 @@ window.onload = function() {
 				player.mouseY = e.clientY;
 
 				var angle = Math.atan2(player.mouseY - this.y, player.mouseX - this.x);
-           		angle = angle * (180/Math.PI);
+           	angle = angle * (180/Math.PI);
 
-           	
-
-           		player.rotation = 90 + angle;
-
-				
-
-				
+           	player.rotation = 90 + angle;
 			});
 
 			this.addEventListener('enterframe', this.movement);
