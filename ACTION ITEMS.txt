@@ -5,6 +5,7 @@ Score Label------------------------------------DONE
 Wave Label
 Enemies Remaining Label
 Store screen
+Fix bug of only 1 powerup being selectable
 
 	Scotty
 Place Tower via Mouse
@@ -22,7 +23,6 @@ Narrative?
 Add at least 2 more enemy types
 Add more sound effects?
 Make enemies spawn from offscreen first like asteroids
-Fix bug of only 1 being selectable
 Maybe reduce enemy sprite size for more screen real estate
 
 
