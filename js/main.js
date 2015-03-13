@@ -114,7 +114,7 @@ window.onload = function() {
 					this.rotation += 5;
 				}
 
-				if(this.touching && this.moveable){
+				if(this.touching && this.moveable && Game.instance.currentScene.build){
 					
 					this.x = this.mouseX - this.width/2;
 					this.y = this.mouseY - this.width/2; 
@@ -462,10 +462,12 @@ window.onload = function() {
 		    this.player = playerArg;
 		    this.powerups = powerupsArg;
 
-
+		    this.sendTurrets = turretsArg;
 		    this.turrets = turretsArg;
+		    console.log("Level CHILDREN: " + this.turrets.childNodes.length);
 
 		    this.store = false;
+		    this.build = false;
 		    game = Game.instance;
 
 		    bg = new Sprite(800, 600);
@@ -515,20 +517,26 @@ window.onload = function() {
           this.scenery = scenery;
 
 		    this.addChild(bg);
-          this.addChild(bullets);
-		    this.addChild(enemies);	
-		    this.addChild(player);
           this.addChild(scenery);
           this.addChild(ozoneGroup);
-		    this.addChild(hudbar);
-		    this.addChild(scoreDisplay);
 
+          console.log("BEFORE LOOP " + this.turrets.childNodes.length);
 		    //adds a turret only if it is active
 		    for(var i=0; i <  this.turrets.childNodes.length; i++){
-		    	if(this.turrets.childNodes[i].active){
-		    		this.addChild(this.turrets.childNodes[i]);
+		    	if(!this.turrets.childNodes[i].active){
+		    		this.turrets.childNodes[i].visible = false;
 		    	}
 		    }
+
+		    this.addChild(this.turrets);
+
+		    console.log("AFTER LOOP " + this.turrets.childNodes.length);
+
+		    this.addChild(bullets);
+		    this.addChild(enemies);	
+		    this.addChild(hudbar);
+		    this.addChild(scoreDisplay);
+		    this.addChild(player);
 
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
@@ -597,6 +605,7 @@ window.onload = function() {
          }
 
 			if (this.enemiesKilled >= this.maxEnemies) {
+				console.log("Right before replace CHILDREN: " + this.turrets.childNodes.length);
 				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups, this.turrets));
 			}
 		},
@@ -643,12 +652,14 @@ window.onload = function() {
           	this.paused = false;
 
           	this.turrets = turretsArg;
+          	console.log("STORE CHILDREN: " + this.turrets.childNodes.length);
 
 		    player = playerArg;
 		    this.player = playerArg;
 		    var powerups = powerupsArg;
 		    game = Game.instance;
 		    this.store = true;
+		    this.build = false;
 
 		    bg = new Sprite(800, 600);
 		    bg.image = game.assets['res/images/space_bg3.jpeg'];
@@ -708,7 +719,8 @@ window.onload = function() {
 		    this.addChild(bg);
 		    this.addChild(powerups);
           this.addChild(bullets);
-		    this.addChild(enemies);	
+		    this.addChild(enemies);
+
 		    this.addChild(player);
           this.addChild(scenery);
           this.addChild(ozoneGroup);
@@ -772,7 +784,8 @@ window.onload = function() {
           	this.paused = false;
 
           	this.turrets = turretsArg;
-
+          	this.store = false;
+          	this.build = true;
           	
 
           	game = Game.instance;
@@ -881,9 +894,10 @@ window.onload = function() {
           		}else{
           			this.turrets.childNodes[i].active = false;
           		}
+
+          		this.turrets.childNodes[i].visible = true;
           	}
 
-          	console.log(this.turrets.childNodes[0].active);
 		},
 
       // Currently bound to 'SHIFT' key, for pausing
@@ -1033,8 +1047,9 @@ window.onload = function() {
          		var pUp = powerups.childNodes[i];
 
          		if (this.within (pUp, 50)) {
-         			if (pUp.unlocked && pUp.unpurchased) {
-         				pUp.unpurchased = false;
+         			if (pUp.unlocked) {
+         				scene.player.score -= pUp.cost;
+         				//pUp.unpurchased = false;
          				pUp.takeEffect(pUp.powerType);
          				this.parentNode.removeChild(this);
 
@@ -1176,7 +1191,7 @@ window.onload = function() {
 
       	if (powerType == "speed") {
 
-      		scene.player.speed *= 3;
+      		scene.player.speed *= 2;
       	}
       }
    });   
