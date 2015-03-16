@@ -25,7 +25,8 @@ window.onload = function() {
              "res/images/asteroid_sheet30.png", "res/images/asteroid-pieces.png", "res/images/explosion_sheet16.png",
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
              "res/images/boomerang_bullet.png", "res/images/beams.png", "res/images/powers.png", "res/images/PU_speed.png",
-             "res/images/PU_health.png", "res/images/turret_shooting.png", "res/images/turret_grid.png", "res/images/finish_build_button.png");
+             "res/images/PU_health.png", "res/images/turret_shooting.png", "res/images/turret_grid.png", "res/images/finish_build_button.png",
+             "res/images/skip.png", "res/images/controlScreen.png");
 
    // Setup Soundmanager2.js
    soundManager.setup({
@@ -88,7 +89,7 @@ window.onload = function() {
 			this.touching = false;
 			this.moveable = false;
 			this.active = false;
-			this.cost = 10;
+			this.cost = 1000;
 
 
 			Sprite.apply(this,[70,70]);
@@ -343,11 +344,17 @@ window.onload = function() {
 		    healthPU.image = game.assets['res/images/PU_health.png'];
 		    healthPU.x = 550;
 
+		    var skipPU = new PowerUp();
+		    skipPU.powerType = "skip";
+		    skipPU.image = game.assets['res/images/skip.png'];
+		    skipPU.x = 350;
+		    skipPU.y = 100;
+		    skipPU.cost = 0;
+
 		    AllPowerUps = new Group();
 		    AllPowerUps.addChild(speedPU);
 		    AllPowerUps.addChild(healthPU);
-		    //AllPowerUps.addChild(turretsPU);
-		    //AllPowerUps.addChild(meteorsPU);
+		    AllPowerUps.addChild(skipPU);
 
 		    var turret = new Turret("dumb");
             turret.image = game.assets['res/images/turret_shooting.png'];
@@ -406,7 +413,7 @@ window.onload = function() {
 			backButton.image = game.assets['res/images/back_button.png'];
 			backButton.x = 100;
 			backButton.y = 500;
-
+/*
 			// Create images for button controls - WASD keys
 			wasd = new Sprite(325, 220);
 			wasd.image = game.assets['res/images/wasd.png'];
@@ -423,12 +430,18 @@ window.onload = function() {
 			spacebar.image = game.assets['res/images/spacebar.png'];
 			spacebar.x = 300;
 			spacebar.y = 400;
+*/
+			controlScreen = new Sprite(800, 600);
+			controlScreen.image = game.assets['res/images/controlScreen.png'];
+			controlScreen.x = 100;
+			controlScreen.y = 17;
 
 			this.addChild(bg);
+			this.addChild(controlScreen);
 			this.addChild(backButton);
-			this.addChild(wasd);
-			this.addChild(mouse);
-			this.addChild(spacebar)
+			//this.addChild(wasd);
+			//this.addChild(mouse);
+			//this.addChild(spacebar)
 
 			backButton.addEventListener(Event.TOUCH_START, this.goBack);
 		},
@@ -464,7 +477,6 @@ window.onload = function() {
 
 		    this.sendTurrets = turretsArg;
 		    this.turrets = turretsArg;
-		    console.log("Level CHILDREN: " + this.turrets.childNodes.length);
 
 		    this.store = false;
 		    this.build = false;
@@ -520,7 +532,6 @@ window.onload = function() {
           this.addChild(scenery);
           this.addChild(ozoneGroup);
 
-          console.log("BEFORE LOOP " + this.turrets.childNodes.length);
 		    //adds a turret only if it is active
 		    for(var i=0; i <  this.turrets.childNodes.length; i++){
 		    	if(!this.turrets.childNodes[i].active){
@@ -530,7 +541,6 @@ window.onload = function() {
 
 		    this.addChild(this.turrets);
 
-		    console.log("AFTER LOOP " + this.turrets.childNodes.length);
 
 		    this.addChild(bullets);
 		    this.addChild(enemies);	
@@ -605,7 +615,6 @@ window.onload = function() {
          }
 
 			if (this.enemiesKilled >= this.maxEnemies) {
-				console.log("Right before replace CHILDREN: " + this.turrets.childNodes.length);
 				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups, this.turrets));
 			}
 		},
@@ -652,7 +661,6 @@ window.onload = function() {
           	this.paused = false;
 
           	this.turrets = turretsArg;
-          	console.log("STORE CHILDREN: " + this.turrets.childNodes.length);
 
 		    player = playerArg;
 		    this.player = playerArg;
@@ -706,6 +714,23 @@ window.onload = function() {
           pauseLabel.textAlign = 'center';
           this.pauseLabel = pauseLabel;
 
+          // Create labels for powerups and turrets costs
+          powerLabel = new Label("POWER UPS cost " + powerups.childNodes[0].cost + " ozone");
+          powerLabel.x = 10;
+          powerLabel.y = 25;
+          powerLabel.color = 'white';
+          powerLabel.font = 'bold 16px sans-serif';
+          powerLabel.textAlign = 'left';
+          this.powerLabel = powerLabel;
+
+          turretLabel = new Label("TURRETS cost " + turretsArg.childNodes[0].cost + " ozone");
+          turretLabel.x = 10;
+          turretLabel.y = 50;
+          turretLabel.color = 'white';
+          turretLabel.font = 'bold 16px sans-serif';
+          turretLabel.textAlign = 'left';
+          this.turretLabel = turretLabel;
+
           // Experimental Ozone cloud sprite for future gameplay mechanics
           ozoneGroup = new Group();
           this.ozoneGroup = ozoneGroup;
@@ -720,6 +745,8 @@ window.onload = function() {
 		    this.addChild(powerups);
           this.addChild(bullets);
 		    this.addChild(enemies);
+		    this.addChild(powerLabel);
+		    this.addChild(turretLabel);
 
 		    this.addChild(player);
           this.addChild(scenery);
@@ -791,6 +818,7 @@ window.onload = function() {
           	game = Game.instance;
 
           	this.player = playerArg;
+          	var powerups = powerupsArg;
 
 
 		    bg = new Sprite(800, 600);
@@ -852,6 +880,23 @@ window.onload = function() {
           pauseLabel.textAlign = 'center';
           this.pauseLabel = pauseLabel;
 
+          // Create labels for powerups and turrets costs
+          powerLabel = new Label("POWER UPS cost " + powerups.childNodes[0].cost + " ozone");
+          powerLabel.x = 10;
+          powerLabel.y = 75;
+          powerLabel.color = 'white';
+          powerLabel.font = 'bold 16px sans-serif';
+          powerLabel.textAlign = 'left';
+          this.powerLabel = powerLabel;
+
+          turretLabel = new Label("TURRETS cost " + turretsArg.childNodes[0].cost + " ozone");
+          turretLabel.x = 10;
+          turretLabel.y = 100;
+          turretLabel.color = 'white';
+          turretLabel.font = 'bold 16px sans-serif';
+          turretLabel.textAlign = 'left';
+          this.turretLabel = turretLabel;
+
           // Experimental Ozone cloud sprite for future gameplay mechanics
           ozoneGroup = new Group();
           this.ozoneGroup = ozoneGroup;
@@ -871,6 +916,8 @@ window.onload = function() {
 		    this.addChild(hudbar);
 		    this.addChild(this.turrets);
 		    this.addChild(finishBuildButton);
+		    this.addChild(powerLabel);
+		    this.addChild(turretLabel);
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
@@ -1175,7 +1222,7 @@ window.onload = function() {
          this.x = 150;
          this.y = 300;
 
-         this.cost = 10;
+         this.cost = 200;
          this.unpurchased = true;
          this.unlocked = false;
       },
@@ -1192,6 +1239,10 @@ window.onload = function() {
       	if (powerType == "speed") {
 
       		scene.player.speed *= 2;
+      	}
+
+      	if (powerType = "skip") {
+      		//does nothing, scene will be replaced
       	}
       }
    });   
