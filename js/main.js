@@ -13,7 +13,7 @@ window.onload = function() {
 	// 'folder/image.png' or 'folder/sound.wav'. Just add commas to load multiples
 	game.preload('res/images/back_button.png', 'res/images/background.png', 'res/images/beams_2.png', 'res/images/button-blue.png',
 				 'res/images/cell.jpg', 'res/images/chad_price_grin.png', 'res/images/controls_button.png',
-				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.jpg',
+				 'res/images/cyberterrorist.jpg', 'res/images/drought.jpg', 'res/images/earthsatellites.png',
 				 'res/images/earthsorbit.jpg', 'res/images/game_over.png', 'res/images/globalwarming.jpg',
 				 'res/images/gold-ball.png', 'res/images/hp_bar.png', 'res/images/idle.png', 'res/images/logo.png',
 				 'res/images/man01.png', 'res/images/mouse.png', 'res/images/portrait_hit.png', 'res/images/portrait_idle.png',
@@ -316,71 +316,11 @@ window.onload = function() {
 			this.addChild(controlsButton);
 
 			// Create event listeners to listen for mouse clicks on buttons
-			startButton.addEventListener(Event.TOUCH_START, this.playGame);
+			startButton.addEventListener(Event.TOUCH_START, function() {
+                           game.popScene(this);
+                           game.pushScene(new StoryScene());
+                        });
 			controlsButton.addEventListener(Event.TOUCH_START, this.getControls);
-		},
-
-		// Loads the first level if Start button is clicked
-		playGame: function(evt) {
-			var game = Game.instance;
-         game.soundUfo.play({
-                onfinish: function() {
-                   loopSound(Game.instance.soundUfo);
-                }
-         });
-			//create a new player to be passed to level
-		    var player = new Player();
-		    player.x = 40;
-		    player.y = 40;
-		    player.health = player.maxHealth = 100;
-		    player.score = 0;
-
-		    var speedPU = new PowerUp();
-		    speedPU.powerType = "speed";
-		    speedPU.image = game.assets['res/images/PU_speed.png'];
-
-		    var healthPU = new PowerUp();
-		    healthPU.powerType = "health";
-		    healthPU.image = game.assets['res/images/PU_health.png'];
-		    healthPU.x = 550;
-
-		    var skipPU = new PowerUp();
-		    skipPU.powerType = "skip";
-		    skipPU.image = game.assets['res/images/skip.png'];
-		    skipPU.x = 350;
-		    skipPU.y = 100;
-		    skipPU.cost = 0;
-
-		    AllPowerUps = new Group();
-		    AllPowerUps.addChild(speedPU);
-		    AllPowerUps.addChild(healthPU);
-		    AllPowerUps.addChild(skipPU);
-
-		    var turret = new Turret("dumb");
-            turret.image = game.assets['res/images/turret_shooting.png'];
-            turret.x = 725;
-          	turret.y = 20;
-
-          	var turret2 = new Turret("dumb");
-            turret2.image = game.assets['res/images/turret_shooting.png'];
-            turret2.x = 725;
-          	turret2.y = 120;
-
-          	var turret3 = new Turret("dumb");
-            turret3.image = game.assets['res/images/turret_shooting.png'];
-            turret3.x = 725;
-          	turret3.y = 220;
-
-
-
-		    AllTurrets = new Group();
-		    AllTurrets.addChild(turret);
-		    AllTurrets.addChild(turret2);
-		    AllTurrets.addChild(turret3);
-
-		    
-
-			game.replaceScene(new Level(player, 3, AllPowerUps, AllTurrets));
 		},
 
 		// Loads the Controls screen if Controls button is clicked
@@ -1034,6 +974,130 @@ window.onload = function() {
       }
    }); 
 
+	// Loads the first level if Start button is clicked
+		var playGame = function(evt) {
+			var game = Game.instance;
+         game.soundUfo.play({
+                onfinish: function() {
+                   loopSound(Game.instance.soundUfo);
+                }
+         });
+			//create a new player to be passed to level
+		    var player = new Player();
+		    player.x = 40;
+		    player.y = 40;
+		    player.health = player.maxHealth = 100;
+		    player.score = 0;
+
+		    var speedPU = new PowerUp();
+		    speedPU.powerType = "speed";
+		    speedPU.image = game.assets['res/images/PU_speed.png'];
+
+		    var healthPU = new PowerUp();
+		    healthPU.powerType = "health";
+		    healthPU.image = game.assets['res/images/PU_health.png'];
+		    healthPU.x = 550;
+
+		    var skipPU = new PowerUp();
+		    skipPU.powerType = "skip";
+		    skipPU.image = game.assets['res/images/skip.png'];
+		    skipPU.x = 350;
+		    skipPU.y = 100;
+		    skipPU.cost = 0;
+
+		    AllPowerUps = new Group();
+		    AllPowerUps.addChild(speedPU);
+		    AllPowerUps.addChild(healthPU);
+		    AllPowerUps.addChild(skipPU);
+
+		    var turret = new Turret("dumb");
+            turret.image = game.assets['res/images/turret_shooting.png'];
+            turret.x = 725;
+          	turret.y = 20;
+
+          	var turret2 = new Turret("dumb");
+            turret2.image = game.assets['res/images/turret_shooting.png'];
+            turret2.x = 725;
+          	turret2.y = 120;
+
+          	var turret3 = new Turret("dumb");
+            turret3.image = game.assets['res/images/turret_shooting.png'];
+            turret3.x = 725;
+          	turret3.y = 220;
+
+
+
+		    AllTurrets = new Group();
+		    AllTurrets.addChild(turret);
+		    AllTurrets.addChild(turret2);
+		    AllTurrets.addChild(turret3);
+
+		    
+
+			game.replaceScene(new Level(player, 3, AllPowerUps, AllTurrets));
+		};
+
+//Story Scene class
+   var StoryScene = Class.create(Scene, {
+      initialize: function() {
+         Scene.apply(this);
+
+         this.scene = 0;
+
+         var storyImage = new Sprite(500, 350);
+         storyImage.image = game.assets['res/images/drought.jpg'];
+         storyImage.x = 150;
+         storyImage.y = 50;
+
+         this.backgroundColor = "black";
+
+         this.addChild(storyImage);
+
+         this.on("touchstart", function(evt) {
+            if (++this.scene == 5) {
+               playGame();
+            }
+
+            else if (this.scene == 4) {
+               this.removeChild(storyImage);
+               storyImage = new Sprite(272, 288);
+               storyImage.image = game.assets['res/images/chad_price_grin.png'];
+               storyImage.x = 275;
+               storyImage.y = 50;
+               this.addChild(storyImage);
+            }
+
+            else if (this.scene == 3) {
+               this.removeChild(storyImage);
+               storyImage = new Sprite(500, 364);
+               storyImage.image = game.assets['res/images/earthsatellites.png'];
+               storyImage.x = 150;
+               storyImage.y = 50;
+               this.addChild(storyImage);
+            }
+
+            else if (this.scene == 2) {
+               this.removeChild(storyImage);
+               storyImage = new Sprite(595, 300);
+               storyImage.image = game.assets['res/images/cyberterrorist.jpg'];
+               storyImage.x = 105;
+               storyImage.y = 50;
+               this.addChild(storyImage);
+            }
+
+            else if (this.scene == 1) {
+               this.removeChild(storyImage);
+               storyImage = new Sprite(500, 354);
+               storyImage.image = game.assets['res/images/earthsorbit.jpg'];
+               storyImage.x = 150;
+               storyImage.y = 50;
+               this.addChild(storyImage);
+            }
+            
+         });
+      }
+   });
+         
    //bullet class
    var Bullet = enchant.Class.create(enchant.Sprite, {
       initialize: function(x, y, targetX, targetY) {
