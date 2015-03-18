@@ -1049,16 +1049,80 @@ window.onload = function() {
          storyImage.x = 150;
          storyImage.y = 50;
 
+         var storyText1 = new Label("In the year 2077, a 3-year");
+         var storyText2 = new Label ("drought threw Earth's water");
+         var storyText3 = new Label("supply and ecosystems into");
+         var storyText4 = new Label("disarray, and global warming");
+         var storyText5 = new Label("could no longer be ignored.");
+         var storyText6, storyText7;
+         storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = "#0f0";
+         storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font =  "20px sans-serif";
+         storyText1.x = 282;
+         storyText1.y = 425;
+         storyText2.x = 282;
+         storyText2.y = 450;
+         storyText3.x = 282;
+         storyText3.y = 475;
+         storyText4.x = 282;
+         storyText4.y = 500;
+         storyText5.x = 282;
+         storyText5.y = 525;
+
          this.backgroundColor = "black";
 
          this.addChild(storyImage);
+         this.addChild(storyText1);
+         this.addChild(storyText2);
+         this.addChild(storyText3);
+         this.addChild(storyText4);
+         this.addChild(storyText5);
 
          this.on("touchstart", function(evt) {
-            if (++this.scene == 5) {
+            if (++this.scene == 6) {
                playGame();
             }
 
-            else if (this.scene == 4) {
+            else if (this.scene == 5) {
+               this.removeChild(storyText1);
+               this.removeChild(storyText2);
+               this.removeChild(storyText3);
+               this.removeChild(storyText4);
+               this.removeChild(storyText5);
+               this.removeChild(storyText6);
+
+               storyText1 = new Label("The Harvesters have been");
+               storyText2 = new Label ("consuming the Ozone for the past");
+               storyText3 = new Label("5 months; during this time, Chad");
+               storyText4 = new Label("Price has been training with Earth's");
+               storyText5 = new Label("resistance force for a chance at"); 
+               storyText6 = new Label("redeption. Today is that chance,");
+               storyText7 = new Label("and no Harvester will be left intact.");
+               storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = storyText6.color = storyText7.color = "#0f0";
+               storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font = storyText6.font = storyText7.font = "19px sans-serif";
+
+               storyText1.x = 265;
+               storyText1.y = 400;
+               storyText2.x = 265;
+               storyText2.y = 425;
+               storyText3.x = 265;
+               storyText3.y = 450;
+               storyText4.x = 265;
+               storyText4.y = 475;
+               storyText5.x = 265;
+               storyText5.y = 500;
+               storyText6.x = 265;
+               storyText6.y = 525;
+               storyText7.x = 265;
+               storyText7.y = 550;
+
+               this.addChild(storyText1);
+               this.addChild(storyText2);
+               this.addChild(storyText3);
+               this.addChild(storyText4);
+               this.addChild(storyText5);
+               this.addChild(storyText6);
+               this.addChild(storyText7);
+
                this.removeChild(storyImage);
                storyImage = new Sprite(272, 288);
                storyImage.image = game.assets['res/images/chad_price_grin.png'];
@@ -1067,16 +1131,87 @@ window.onload = function() {
                this.addChild(storyImage);
             }
 
-            else if (this.scene == 3) {
+            else if (this.scene == 4) {
+               this.removeChild(storyText1);
+               this.removeChild(storyText2);
+               this.removeChild(storyText3);
+               this.removeChild(storyText4);
+               this.removeChild(storyText5);
+               this.removeChild(storyText6);
+
+               storyText1 = new Label("The New Suns refitted the robots,");
+               storyText2 = new Label ("which they refer to as \"harvesters\",");
+               storyText3 = new Label("for an attack against the Earth.");
+               storyText4 = new Label("The terrorists were able to use");
+               storyText5 = new Label("NASA spies and computer"); 
+               storyText6 = new Label("viruses to disable Earth's defenses.");
+               storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = storyText6.color = "#0f0";
+               storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font = storyText6.font = "20px sans-serif";
+
+               storyText1.x = 265;
+               storyText1.y = 400;
+               storyText2.x = 265;
+               storyText2.y = 425;
+               storyText3.x = 265;
+               storyText3.y = 450;
+               storyText4.x = 265;
+               storyText4.y = 475;
+               storyText5.x = 265;
+               storyText5.y = 500;
+               storyText6.x = 265;
+               storyText6.y = 525;
+
+               this.addChild(storyText1);
+               this.addChild(storyText2);
+               this.addChild(storyText3);
+               this.addChild(storyText4);
+               this.addChild(storyText5);
+               this.addChild(storyText6);
+
                this.removeChild(storyImage);
                storyImage = new Sprite(500, 364);
                storyImage.image = game.assets['res/images/earthsatellites.png'];
                storyImage.x = 150;
-               storyImage.y = 50;
+               storyImage.y = 0;
                this.addChild(storyImage);
             }
 
-            else if (this.scene == 2) {
+            else if (this.scene == 3) {
+               this.removeChild(storyText1);
+               this.removeChild(storyText2);
+               this.removeChild(storyText3);
+               this.removeChild(storyText4);
+               this.removeChild(storyText5);
+
+               storyText1 = new Label("The New Suns, a group of");
+               storyText2 = new Label ("cyber-terrorists, took control");
+               storyText3 = new Label("of the robots due to their");
+               storyText4 = new Label("security vulnerabilities, and");
+               storyText5 = new Label("sought to cleanse Earth of the"); 
+               storyText6 = new Label("lifeforms that had failed it.");
+               storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = storyText6.color = "#0f0";
+               storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font = storyText6.font = "20px sans-serif";
+
+               storyText1.x = 275;
+               storyText1.y = 400;
+               storyText2.x = 275;
+               storyText2.y = 425;
+               storyText3.x = 275;
+               storyText3.y = 450;
+               storyText4.x = 275;
+               storyText4.y = 475;
+               storyText5.x = 275;
+               storyText5.y = 500;
+               storyText6.x = 275;
+               storyText6.y = 525;
+
+               this.addChild(storyText1);
+               this.addChild(storyText2);
+               this.addChild(storyText3);
+               this.addChild(storyText4);
+               this.addChild(storyText5);
+               this.addChild(storyText6);
+
                this.removeChild(storyImage);
                storyImage = new Sprite(595, 300);
                storyImage.image = game.assets['res/images/cyberterrorist.jpg'];
@@ -1085,7 +1220,78 @@ window.onload = function() {
                this.addChild(storyImage);
             }
 
+            else if (this.scene == 2) {
+               this.removeChild(storyText1);
+               this.removeChild(storyText2);
+               this.removeChild(storyText3);
+               this.removeChild(storyText4);
+               this.removeChild(storyText5);
+
+               storyText1 = new Label("The program's leader, Chad");
+               storyText2 = new Label ("Price, rushed deployment of");
+               storyText3 = new Label("robots tasked to repair the");
+               storyText4 = new Label("Earth's Ozone layer to save");
+               storyText5 = new Label("the environment.");
+               storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = "#0f0";
+               storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font =  "20px sans-serif";
+
+               storyText1.x = 275;
+               storyText1.y = 425;
+               storyText2.x = 275;
+               storyText2.y = 450;
+               storyText3.x = 275;
+               storyText3.y = 475;
+               storyText4.x = 275;
+               storyText4.y = 500;
+               storyText5.x = 275;
+               storyText5.y = 525;
+
+               this.addChild(storyText1);
+               this.addChild(storyText2);
+               this.addChild(storyText3);
+               this.addChild(storyText4);
+               this.addChild(storyText5);
+
+               this.removeChild(storyImage);
+               storyImage = new Sprite(272, 288);
+               storyImage.image = game.assets['res/images/chad_price_grin.png'];
+               storyImage.x = 275;
+               storyImage.y = 50;
+               this.addChild(storyImage);
+            }
+
             else if (this.scene == 1) {
+               this.removeChild(storyText1);
+               this.removeChild(storyText2);
+               this.removeChild(storyText3);
+               this.removeChild(storyText4);
+               this.removeChild(storyText5);
+
+               storyText1 = new Label("NASA quickly began a program");
+               storyText2 = new Label ("dedicated to rebuilding Earth's");
+               storyText3 = new Label("Ozone Layer to protect the");
+               storyText4 = new Label("environment against global");
+               storyText5 = new Label("warming.");
+               storyText1.color = storyText2.color = storyText3.color = storyText4.color = storyText5.color = "#0f0";
+               storyText1.font = storyText2.font = storyText3.font = storyText4.font = storyText5.font =  "20px sans-serif";
+
+               storyText1.x = 275;
+               storyText1.y = 425;
+               storyText2.x = 275;
+               storyText2.y = 450;
+               storyText3.x = 275;
+               storyText3.y = 475;
+               storyText4.x = 275;
+               storyText4.y = 500;
+               storyText5.x = 275;
+               storyText5.y = 525;
+
+               this.addChild(storyText1);
+               this.addChild(storyText2);
+               this.addChild(storyText3);
+               this.addChild(storyText4);
+               this.addChild(storyText5);
+
                this.removeChild(storyImage);
                storyImage = new Sprite(500, 354);
                storyImage.image = game.assets['res/images/earthsorbit.jpg'];
