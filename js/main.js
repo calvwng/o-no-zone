@@ -209,7 +209,7 @@ window.onload = function() {
          var enemies = Game.instance.currentScene.enemies;
          for (var i = 0; this.vulnerable == true && i < enemies.childNodes.length; i++) {
             if (this.within(enemies.childNodes[i], 32)) {
-               this.getHurt();
+               this.getHurt(10);
                break;
             }
          }
@@ -277,9 +277,9 @@ window.onload = function() {
          }
 	   },
 
-      getHurt: function() {
+      getHurt: function(damage) {
          this.vulnerable = false;
-         this.health -= 10;
+         this.health -= damage;
          // Fade out and in to denote damage and temporary invlunerability
          for (var f = 0; f < 3; f++) { 
            this.tl.fadeOut(5);
@@ -1553,7 +1553,7 @@ window.onload = function() {
          // Check EnemyBullet collision with player
          var player = Game.instance.currentScene.player;
          if (this.within(player, 20)) {
-            player.getHurt();
+            player.getHurt(20);
             this.parentNode.removeChild(this);
          }
 
@@ -1645,6 +1645,14 @@ window.onload = function() {
       },
 
       update: function(evt) {
+          var scene = Game.instance.currentScene;
+
+          // Check collision with player
+          var player = scene.player;
+          if (this.within(player, 32) && player.vulnerable) {
+             player.getHurt(30);
+          }
+
           this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
           if (this.animationDuration >= this.maxTime) {
              if (this.frame < 30) {
