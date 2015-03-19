@@ -53,6 +53,15 @@ window.onload = function() {
        Game.instance.soundUfo = soundManager.createSound({
          url: 'res/sounds/ufo.mp3'
        });
+       Game.instance.soundChaChing = soundManager.createSound({
+         url: 'res/sounds/cha-ching.wav'
+       });
+       Game.instance.soundError = soundManager.createSound({
+         url: 'res/sounds/error.mp3'
+       });
+       Game.instance.soundPowerUp = soundManager.createSound({
+         url: 'res/sounds/power-up.mp3'
+       });
        console.log("Sounds preloaded!");                    
      }
    });
@@ -108,12 +117,16 @@ window.onload = function() {
 			//event listener for when selected
 			this.addEventListener('touchstart', function(e){
 				this.touching = true;
+				if(!this.moveable){
+					Game.instance.soundError.play();
+				}
 			});
 			this.addEventListener('touchend', function(e){
 				this.touching = false;
 				if((!this.paid) && this.active && this.moveable){
 					Game.instance.currentScene.player.score -= this.cost;
 					this.paid = true;
+					Game.instance.soundChaChing.play();
 				}
 			});
 			this.addEventListener('enterframe', function(e){
@@ -887,7 +900,7 @@ window.onload = function() {
           scenery = new Group();
           this.scenery = scenery;
 
-		    this.addChild(bg);
+		  this.addChild(bg);
           
           this.addChild(ozoneGroup);
 		    this.addChild(buildLabel);
@@ -1407,6 +1420,7 @@ window.onload = function() {
 
          		if (this.within (pUp, 50)) {
          			if (pUp.unlocked) {
+         				Game.instance.soundPowerUp.play();
          				scene.player.score -= pUp.cost;
          				//pUp.unpurchased = false;
          				pUp.takeEffect(pUp.powerType);
