@@ -201,6 +201,11 @@ window.onload = function() {
 		}, 
 
 		update: function() {
+			//check if player is dead
+			if(this.health <= 0){
+				Game.instance.soundUfo.stop();
+				Game.instance.replaceScene(new GameOverScene());
+			}
          //-- Check player collision with enemy
          var enemies = Game.instance.currentScene.enemies;
          for (var i = 0; this.vulnerable == true && i < enemies.childNodes.length; i++) {
@@ -972,16 +977,16 @@ window.onload = function() {
          Scene.apply(this);
          
          var gameOverImage = new Sprite(537, 174);
-         gameOverImage.image = game.assets["./res/images/game_over.png"];
+         gameOverImage.image = game.assets['res/images/game_over.png'];
          gameOverImage.x = 125;
          gameOverImage.y = 100;
          
          var restartButton = new Sprite(119, 39);
-         restartButton.image = game.assets["./res/images/restart_button.png"];
+         restartButton.image = game.assets['res/images/restart_button.png'];
          restartButton.x = 345;
          restartButton.y = 325;
          this.addEventListener("touchstart", function() {
-             game.replaceScene(new Level());
+             playGame();
          });
 
          this.backgroundColor = "black";
@@ -1036,12 +1041,13 @@ window.onload = function() {
 	// Loads the first level if Start button is clicked
 		var playGame = function(evt) {
 			var game = Game.instance;
-         playBgMusic();
+
+            playBgMusic();
 			//create a new player to be passed to level
 		    var player = new Player();
 		    player.x = 40;
 		    player.y = 40;
-		    player.health = player.maxHealth = 100;
+		    player.health = player.maxHealth = 30;
 		    player.score = 0;
 
 		    var speedPU = new PowerUp();
