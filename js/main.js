@@ -182,7 +182,6 @@ window.onload = function() {
 			speed = 1;
 			this.speed = speed;
 
-
 			//initialize player velocity and acceleration (used for momentum)
 			this.vx = 0;
 			this.vy = 0;
@@ -345,10 +344,16 @@ window.onload = function() {
             var level = Game.instance.currentScene;
             var player = level.player;
             var startVec = new Victor(this.x, this.y);
-            var targetVec = new Victor(
-               player.x,
-               player.y
-            );
+            var targetVec;
+            if (player != null) {
+               targetVec = new Victor(
+                  player.x,
+                  player.y
+               );               
+            }
+            else {
+               targetVec = new Victor(400, 300);
+            }
             var movementVec = targetVec.subtract(startVec);
             // Normalize vector to length 1 if movement is not [0, 0]
             if (movementVec.x != 0 && movementVec.y != 0) {
@@ -505,8 +510,8 @@ window.onload = function() {
 		    var maxEnemies = maxEnemiesArg;
 		    var healthbar, hudbar;
 
-          	var pauseLabel;
-          	this.paused = false;
+       	 var pauseLabel;
+       	 this.paused = false;
 
 		    this.spinnerEnemyCount = spinnerEnemyCount;
 		    player = playerArg;
@@ -1112,8 +1117,8 @@ window.onload = function() {
             playBgMusic();
 			//create a new player to be passed to level
 		    var player = new Player();
-		    player.x = 40;
-		    player.y = 40;
+		    player.x = 400;
+		    player.y = 300;
 		    player.health = player.maxHealth = 100;
 		    player.score = 0;
 
