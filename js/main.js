@@ -176,8 +176,8 @@ window.onload = function() {
 			//refference to current player
 			player = this;
 			health = maxHealth = 100;
-         	this.vulnerable = true;
-         	this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
+      	this.vulnerable = true;
+      	this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
 			this.score = 0;
 			speed = 1;
 			this.speed = speed;
@@ -210,18 +210,7 @@ window.onload = function() {
          var enemies = Game.instance.currentScene.enemies;
          for (var i = 0; this.vulnerable == true && i < enemies.childNodes.length; i++) {
             if (this.within(enemies.childNodes[i], 32)) {
-               this.vulnerable = false;
-               this.health -= 10;
-
-               // Fade out and in to denote damage and temporary invlunerability
-               for (var f = 0; f < 3; f++) { 
-                 this.tl.fadeOut(5);
-                 this.tl.fadeIn(5);                  
-               }               
-               this.tl.delay(15).then(function() {
-                  this.vulnerable = !this.vulnerable;
-               });
-               console.log("Player health reduced to :" + this.health);
+               this.getHurt();
                break;
             }
          }
@@ -261,9 +250,9 @@ window.onload = function() {
 
 			//checking the input of the user
 			if (game.input.left) {
-                           this.ax -= 0.5 * this.speed;
-                           this.image = game.assets["res/images/ship_left4.png"];
-                        }
+            this.ax -= 0.5 * this.speed;
+            this.image = game.assets["res/images/ship_left4.png"];
+         }
       	if (game.input.right) {
            this.ax += 0.5 * this.speed;
            this.image = game.assets["res/images/ship_right4.png"];
@@ -287,7 +276,21 @@ window.onload = function() {
          if (newY >= 0 && newY < 550) {
             this.y = newY;
          }
-	   }
+	   },
+
+      getHurt: function() {
+         this.vulnerable = false;
+         this.health -= 10;
+         // Fade out and in to denote damage and temporary invlunerability
+         for (var f = 0; f < 3; f++) { 
+           this.tl.fadeOut(5);
+           this.tl.fadeIn(5);                  
+         }               
+         this.tl.delay(15).then(function() {
+            this.vulnerable = !this.vulnerable;
+         });
+         console.log("Player health reduced to :" + this.health);         
+      }
 	}); // END Player
 
 	/**
@@ -314,6 +317,58 @@ window.onload = function() {
             this.tl.moveTo(this.targetX, this.targetY, 200);
         }
    });
+
+   /**
+   * ShootingEnemy class
+   */
+   var ShootingEnemy = Class.create(Sprite, {
+        initialize: function(x, y) {
+            Sprite.apply(this, [150, 108]);
+
+            this.targetX;
+            this.targetY;
+
+            var game = Game.instance;
+            this.image = game.assets['res/images/Station Center.png'];
+            this.x = x;
+            this.y = y;
+
+            this.speed = 1;
+            this.shootTimer = 1500;
+
+            this.addEventListener(Event.ENTER_FRAME, this.update);
+        },
+
+        update: function(evt) {
+
+            // Slowly move the ShootingEnemy towards the player
+            var level = Game.instance.currentScene;
+            var player = level.player;
+            var startVec = new Victor(this.x, this.y);
+            var targetVec = new Victor(
+               player.x,
+               player.y
+            );
+            var movementVec = targetVec.subtract(startVec);
+            // Normalize vector to length 1 if movement is not [0, 0]
+            if (movementVec.x != 0 && movementVec.y != 0) {
+               movementVec.normalize();
+            }            
+            this.x += movementVec.x * this.speed;
+            this.y += movementVec.y * this.speed;
+
+            // Shoot at player
+            if (this.within(level.bg, 600)) {
+               this.shootTimer -= evt.elapsed;
+               if (this.shootTimer <= 0) {
+                  var enemyCenterX = this.x + 75;
+                  var enemyCenterY = this.y + 54;
+                  level.bullets.addChild(new EnemyBullet(enemyCenterX, enemyCenterY, player.x, player.y));
+                  this.shootTimer = 1500;
+               }
+            }
+        },
+   });   
 
 	// Start Screen
 	var StartScreen = Class.create(Scene, {
@@ -446,14 +501,14 @@ window.onload = function() {
 
 		    var game, bg, enemies, bullets, ozoneGroup, scenery, player, i, scoreDisplay;
 		    var enemySpawnSec = 2000; // ms
-		    var maxSpinners = 10;
+		    var spinnerEnemyCount = 15;
 		    var maxEnemies = maxEnemiesArg;
 		    var healthbar, hudbar;
 
           	var pauseLabel;
           	this.paused = false;
 
-		    this.maxSpinners = maxSpinners;
+		    this.spinnerEnemyCount = spinnerEnemyCount;
 		    player = playerArg;
 		    this.player = playerArg;
 		    this.powerups = powerupsArg;
@@ -467,6 +522,7 @@ window.onload = function() {
 
 		    bg = new Sprite(800, 600);
 		    bg.image = game.assets['res/images/space_bg3.jpeg'];
+          this.bg = bg;
 
 		    enemies = new Group();
 		    this.enemies = enemies;
@@ -523,8 +579,6 @@ window.onload = function() {
 		    }
 
 		    this.addChild(this.turrets);
-
-
 		    this.addChild(bullets);
 		    this.addChild(enemies);	
 		    this.addChild(hudbar);
@@ -538,8 +592,11 @@ window.onload = function() {
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
 
+
+          this.shootingEnemyTimer = 3000;
           this.asteroidTimer = 5000 + Math.floor(Math.random() * 5000);
-		   	this.tl.setTimeBased();
+
+		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
@@ -548,13 +605,24 @@ window.onload = function() {
 		update: function(evt) {
          //-- Spawn SpinnerEnemy every 1000 ms
          this.tl.delay(500).then(function() {
-            // Limit enemies on screen to 10
-            if (this.enemies.childNodes.length < 15) {
+            // Limit enemies on screen
+            if (this.enemies.childNodes.length < this.spinnerEnemyCount) {
                var enemyX = Math.floor(Math.random() * 2) ? -50 : 850;
                var enemyY = Math.floor(Math.random() * 600);
                this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
             }
          });
+
+         //-- Spawn ShootingEnemy every 3000 ms
+         this.shootingEnemyTimer -= evt.elapsed;
+         // Limit enemies on screen
+         if (this.shootingEnemyTimer <= 0) {
+            var enemyX = Math.floor(Math.random() * 2) ? -50 : 850;
+            var enemyY = Math.floor(Math.random() * 2) ? -50 : 600;
+            // console.log("Spawning ShootingEnemy at " + enemyX + ", " + enemyY);
+            this.enemies.addChild(new ShootingEnemy(enemyX, enemyY));
+            this.shootingEnemyTimer = 3000;
+         }
 
          //-- Spawn a new asteroid after 5 + (0 to 5) seconds
          this.asteroidTimer -= evt.elapsed;
@@ -1440,6 +1508,49 @@ window.onload = function() {
          		}
          	}
      	}
+
+         // Move bullet according to normalized movement vector & speedw
+         this.x += this.movementVec.x * this.speed;
+         this.y += this.movementVec.y * this.speed;
+      }
+   });
+
+   //bullet class
+   var EnemyBullet = enchant.Class.create(enchant.Sprite, {
+      initialize: function(x, y, targetX, targetY) {
+         enchant.Sprite.call(this, 32, 25);
+         this.image = game.assets["res/images/beams.png"];
+         Game.instance.soundBlast.play();
+
+         this.speed = 3;
+         this.x = x;
+         this.y = y;
+
+         // Find the movement between the bullet and target
+         var targetVec = new Victor(targetX, targetY);
+         var bulletStartVec = new Victor(x, y);
+         var movementVec = targetVec.subtract(bulletStartVec);
+         // Normalize vector to length 1 if movement is not [0, 0]
+         if (movementVec.x != 0 && movementVec.y != 0) {
+            movementVec.normalize();
+         }
+         this.movementVec = movementVec;
+
+         this.addEventListener(Event.ENTER_FRAME, this.update);
+      },
+
+      update: function() {
+         // Remove from "bullets" group when out of bounds + buffer
+         if (this.x < 0 || this.x > 820 || this.y < 0 || this.y > 620) {
+            this.parentNode.removeChild(this);
+         }
+
+         // Check EnemyBullet collision with player
+         var player = Game.instance.currentScene.player;
+         if (this.within(player, 20)) {
+            player.getHurt();
+            this.parentNode.removeChild(this);
+         }
 
          // Move bullet according to normalized movement vector & speedw
          this.x += this.movementVec.x * this.speed;
