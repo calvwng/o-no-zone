@@ -313,8 +313,8 @@ window.onload = function() {
         update: function() {
             this.targetX = Math.floor(Math.random() * 800);
             this.targetY = Math.floor(Math.random() * 600);
-            this.tl.moveTo(this.targetX, this.targetY, 200);
-        }
+            this.tl.moveTo(this.targetX, this.targetY, 125);
+        }       
    });
 
    /**
@@ -373,6 +373,10 @@ window.onload = function() {
                }
             }
         },
+
+        resetSpeed: function() {
+           this.speed = 1;
+        }
    });   
 
 	// Start Screen
@@ -565,7 +569,9 @@ window.onload = function() {
           // Experimental Ozone cloud sprite for future gameplay mechanics
           ozoneGroup = new Group();
           this.ozoneGroup = ozoneGroup;
-          var ozoneCloud = new Ozone(300, 300);
+          var ozoneCloud = new Ozone(
+            Math.floor(Math.random() * 800),
+            Math.floor(Math.random() * 600));
           ozoneGroup.addChild(ozoneCloud);
 
           // Group for scenery sprites and effects
@@ -603,6 +609,7 @@ window.onload = function() {
 
 		    this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
+          this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
 		},
@@ -674,6 +681,11 @@ window.onload = function() {
 				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups, this.turrets));
 			}
 		},
+
+      // CTRL
+      aHandler: function(evt) {
+         // Does nothing currently
+      },
 
       // Currently bound to 'SHIFT' key, for pausing
       bHandler: function(evt) {
@@ -799,12 +811,6 @@ window.onload = function() {
           turretLabel.textAlign = 'left';
           this.turretLabel = turretLabel;
 
-          // Experimental Ozone cloud sprite for future gameplay mechanics
-          ozoneGroup = new Group();
-          this.ozoneGroup = ozoneGroup;
-          var ozoneCloud = new Ozone(300, 300);
-          ozoneGroup.addChild(ozoneCloud);
-
           // Group for scenery sprites and effects
           scenery = new Group();
           this.scenery = scenery;
@@ -818,7 +824,6 @@ window.onload = function() {
 
 		    this.addChild(player);
           this.addChild(scenery);
-          this.addChild(ozoneGroup);
 		    this.addChild(hudbar);
 		    this.addChild(scoreDisplay);
 
@@ -967,19 +972,12 @@ window.onload = function() {
           turretLabel.textAlign = 'left';
           this.turretLabel = turretLabel;
 
-          // Experimental Ozone cloud sprite for future gameplay mechanics
-          ozoneGroup = new Group();
-          this.ozoneGroup = ozoneGroup;
-          var ozoneCloud = new Ozone(300, 300);
-          ozoneGroup.addChild(ozoneCloud);
-
           // Group for scenery sprites and effects
           scenery = new Group();
           this.scenery = scenery;
 
 		  this.addChild(bg);
           
-          this.addChild(ozoneGroup);
 		    this.addChild(buildLabel);
 		    this.addChild(scoreDisplay);
 		    this.addChild(turret_grid);
@@ -1582,6 +1580,14 @@ window.onload = function() {
       },
 
       update: function(evt) {
+          // // attract enemies
+          // var enemies = Game.instance.currentScene.enemies;
+          // for (var i = 0; i < enemies.childNodes.length; i++) {
+          //    if (this.within(enemies.childNodes[i], 100)) {
+          //      enemies.childNodes[i].tl.moveTo(this.x, this.y, 20);
+          //    }
+          // }
+
           this.animationDuration += evt.elapsed * 0.001;    // ms to sec   
           if (this.animationDuration >= 0.05) {
              if (this.frame < 30) {
