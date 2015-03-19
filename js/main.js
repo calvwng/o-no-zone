@@ -95,7 +95,7 @@ window.onload = function() {
 			this.touching = false;
 			this.moveable = false;
 			this.active = false;
-			this.cost = 1000;
+			this.cost = 200;
 
 
 			Sprite.apply(this,[70,70]);
@@ -116,10 +116,11 @@ window.onload = function() {
 
 				if(this.active){
 					if(type == "dumb"){
-						this.rotation += 5;
-						//var bullet = new Bullet(this.x, this.y, game.width/2, game.height/2);
-						//bullet.rotation = this.rotation;     
-            			//Game.instance.currentScene.bullets.addChild(bullet);
+						
+						var angle = Math.atan2(turret.mouseY - this.y, turret.mouseX - this.x);
+           				angle = angle * (180/Math.PI);
+
+         				turret.rotation = 90 + angle;
 					}	
 				}
 
@@ -136,6 +137,9 @@ window.onload = function() {
 			document.addEventListener("mousemove", function(e){
 				turret.mouseX = e.clientX;
 				turret.mouseY = e.clientY;
+				
+				
+					
 			});
 
 		}
@@ -600,7 +604,17 @@ window.onload = function() {
             var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
             var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
             var degrees = (radians/Math.PI) * 180;
-            bullet.rotation = degrees + 90;     
+            bullet.rotation = degrees + 90; 
+
+            for(var i=0; i <  this.turrets.childNodes.length; i++){
+		    	if(this.turrets.childNodes[i].active){
+		    		var bullet2 = new Bullet(this.turrets.childNodes[i].x, this.turrets.childNodes[i].y, evt.x, evt.y);
+           			var radians2 = Math.atan2(evt.y - bullet2.y, evt.x - bullet2.x);
+            		var degrees2 = (radians2/Math.PI) * 180;
+            		bullet2.rotation = degrees2 + 90; 
+            		this.bullets.addChild(bullet2);
+		    	}
+		    }    
             this.bullets.addChild(bullet);
          }
       }
