@@ -26,7 +26,7 @@ window.onload = function() {
              "res/images/Com Relay.png", "res/images/Station Center.png", "res/images/Station Ring.png",
              "res/images/boomerang_bullet.png", "res/images/beams.png", "res/images/powers.png", "res/images/PU_speed.png",
              "res/images/PU_health.png", "res/images/turret_shooting.png", "res/images/turret_grid.png", "res/images/finish_build_button.png",
-             "res/images/skip.png", "res/images/controlScreen.png");
+             "res/images/skip.png", "res/images/controlScreen.png", "res/images/ship_left4.png", "res/images/ship_right4.png");
 
    // Setup Soundmanager2.js
    soundManager.setup({
@@ -227,8 +227,17 @@ window.onload = function() {
 			this.ay = 0;
 
 			//checking the input of the user
-			if (game.input.left) this.ax -= 0.5 * this.speed;
-      	if (game.input.right) this.ax += 0.5 * this.speed;
+			if (game.input.left) {
+                           this.ax -= 0.5 * this.speed;
+                           this.image = game.assets["res/images/ship_left4.png"];
+                        }
+      	if (game.input.right) {
+           this.ax += 0.5 * this.speed;
+           this.image = game.assets["res/images/ship_right4.png"];
+        }
+        if (!game.input.right && !game.input.left) {
+           this.image = game.assets["res/images/idle.png"];
+        }
       	if (game.input.up) this.ay -= 0.5 * this.speed;
       	if (game.input.down) this.ay += 0.5 * this.speed;
       	this.vx += this.ax + friction_x;

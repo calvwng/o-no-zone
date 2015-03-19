@@ -17,7 +17,7 @@ Idle Animation for Player (could just scale using timeline)
 Stray debris animation for background
 Find animated backgrounds (preferably rotating earth or upper atmosphere),
  or move background based on player movement
-Narrative?
+Narrative? (DONE)
 
 	Calvin
 Add at least 2 more enemy types
