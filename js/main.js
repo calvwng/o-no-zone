@@ -104,7 +104,7 @@ window.onload = function() {
 			this.touching = false;
 			this.moveable = false;
 			this.active = false;
-			this.cost = 200;
+			this.cost = 500;
 			this.paid = false;
 
 
@@ -455,7 +455,7 @@ window.onload = function() {
 			backButton = new Sprite(96, 40);
 			backButton.image = game.assets['res/images/back_button.png'];
 			backButton.x = 100;
-			backButton.y = 500;
+			backButton.y = 520;
 /*
 			// Create images for button controls - WASD keys
 			wasd = new Sprite(325, 220);
@@ -477,7 +477,7 @@ window.onload = function() {
 			controlScreen = new Sprite(800, 600);
 			controlScreen.image = game.assets['res/images/controlScreen.png'];
 			controlScreen.x = 100;
-			controlScreen.y = 17;
+			controlScreen.y = 55;
 
 			this.addChild(bg);
 			this.addChild(controlScreen);
