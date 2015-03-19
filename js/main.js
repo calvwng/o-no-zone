@@ -90,12 +90,13 @@ window.onload = function() {
 	//turret class that players can move, have all other turrets inherit this class
 	var Turret = Class.create(Sprite, {
 		initialize: function(type) {
-			var game, turret, touching, moveable, active, cost, mouseX, mouseY;
+			var game, turret, touching, moveable, active, cost, mouseX, mouseY, paid;
 
 			this.touching = false;
 			this.moveable = false;
 			this.active = false;
 			this.cost = 200;
+			this.paid = false;
 
 
 			Sprite.apply(this,[70,70]);
@@ -110,6 +111,10 @@ window.onload = function() {
 			});
 			this.addEventListener('touchend', function(e){
 				this.touching = false;
+				if((!this.paid) && this.active && this.moveable){
+					Game.instance.currentScene.player.score -= this.cost;
+					this.paid = true;
+				}
 			});
 			this.addEventListener('enterframe', function(e){
 
@@ -160,7 +165,7 @@ window.onload = function() {
 			health = maxHealth = 100;
          	this.vulnerable = true;
          	this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
-			score = 0;
+			this.score = 0;
 			speed = 1;
 			this.speed = speed;
 
@@ -906,19 +911,27 @@ window.onload = function() {
 		},
 
 		update: function() {
+			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;
 			for(var i=0; i<this.turrets.childNodes.length; i++){
           		if(this.turrets.childNodes[i].cost < this.player.score){
           			this.turrets.childNodes[i].moveable = true;
+          			
+          		}else{
+          			if(!this.turrets.childNodes[i].active){
+          				this.turrets.childNodes[i].moveable = false;
+          			}
           		}
 
           		if((this.turrets.childNodes[i].x + this.turrets.childNodes[i].width) < this.turret_grid.x){
           			this.turrets.childNodes[i].active = true;
+
           		}else{
           			this.turrets.childNodes[i].active = false;
           		}
 
           		this.turrets.childNodes[i].visible = true;
           	}
+
 
 		},
 
