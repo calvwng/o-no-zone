@@ -1047,7 +1047,7 @@ window.onload = function() {
 		    var player = new Player();
 		    player.x = 40;
 		    player.y = 40;
-		    player.health = player.maxHealth = 30;
+		    player.health = player.maxHealth = 100;
 		    player.score = 0;
 
 		    var speedPU = new PowerUp();
