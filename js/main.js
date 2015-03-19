@@ -108,11 +108,13 @@ window.onload = function() {
 			this.addEventListener('enterframe', function(e){
 
 
-				if(active){
+				if(this.active){
 					if(type == "dumb"){
 						this.rotation += 5;
+						//var bullet = new Bullet(this.x, this.y, game.width/2, game.height/2);
+						//bullet.rotation = this.rotation;     
+            			//Game.instance.currentScene.bullets.addChild(bullet);
 					}	
-					this.rotation += 5;
 				}
 
 				if(this.touching && this.moveable && Game.instance.currentScene.build){
@@ -146,8 +148,8 @@ window.onload = function() {
 			//refference to current player
 			player = this;
 			health = maxHealth = 100;
-         this.vulnerable = true;
-         this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
+         	this.vulnerable = true;
+         	this.vulnerableTimer = 1000; // 1 sec before becoming vulnerable again
 			score = 0;
 			speed = 1;
 			this.speed = speed;
@@ -195,7 +197,7 @@ window.onload = function() {
 			var angle = Math.atan2(this.mouseY - this.y, this.mouseX - this.x);
            	angle = angle * (180/Math.PI);
 
-         this.rotation = 90 + angle;
+         	this.rotation = 90 + angle;
 
 			//defining friction of the player with the ground
 			var friction_x = 0;
@@ -407,8 +409,8 @@ window.onload = function() {
 		    var maxEnemies = maxEnemiesArg;
 		    var healthbar, hudbar;
 
-          var pauseLabel;
-          this.paused = false;
+          	var pauseLabel;
+          	this.paused = false;
 
 		    this.maxSpinners = maxSpinners;
 		    player = playerArg;
@@ -430,8 +432,8 @@ window.onload = function() {
 		    this.maxEnemies = maxEnemies;
 		    this.enemiesKilled = 0;
 
-          bullets = new Group();
-          this.bullets = bullets;
+          	bullets = new Group();
+          	this.bullets = bullets;
 
 		    hudbar = new Sprite(300, 100);
 		    hudbar.image = game.assets['res/images/portrait_idle.png'];
@@ -491,12 +493,12 @@ window.onload = function() {
 		    // draw healthbar
 		     healthbar = document.getElementById("canvas");
 		     var context = canvas.getContext('2d');
-           this.context = context;
+             this.context = context;
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
 
           this.asteroidTimer = 5000 + Math.floor(Math.random() * 5000);
-		    this.tl.setTimeBased();
+		   	this.tl.setTimeBased();
 		    this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
@@ -701,7 +703,7 @@ window.onload = function() {
 		     context.fillRect(0, 0, 120, 28);
 
 		    this.tl.setTimeBased();
-		    this.addEventListener(Event.ENTER_FRAME, this.update);
+		  this.addEventListener(Event.ENTER_FRAME, this.update);
           this.addEventListener(Event.B_BUTTON_DOWN, this.bHandler);
           this.addEventListener(Event.TOUCH_START, this.touchHandler);
  
