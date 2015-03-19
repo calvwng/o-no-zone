@@ -311,7 +311,6 @@ window.onload = function() {
         update: function() {
             this.targetX = Math.floor(Math.random() * 800);
             this.targetY = Math.floor(Math.random() * 600);
-
             this.tl.moveTo(this.targetX, this.targetY, 200);
         }
    });
@@ -548,10 +547,10 @@ window.onload = function() {
 
 		update: function(evt) {
          //-- Spawn SpinnerEnemy every 1000 ms
-         this.tl.delay(1000).then(function() {
+         this.tl.delay(500).then(function() {
             // Limit enemies on screen to 10
-            if (this.enemies.childNodes.length < 10) {
-               var enemyX = Math.floor(Math.random() * 800);
+            if (this.enemies.childNodes.length < 15) {
+               var enemyX = Math.floor(Math.random() * 2) ? -50 : 850;
                var enemyY = Math.floor(Math.random() * 600);
                this.enemies.addChild(new SpinnerEnemy(enemyX, enemyY));
             }
@@ -1408,7 +1407,9 @@ window.onload = function() {
                enemies.tl.delay(5).then(function() {
                   enemies.removeChild(enemy);
                });
-               this.parentNode.removeChild(this);
+               if (this.parentNode != null) {
+                  this.parentNode.removeChild(this);
+               }
                scene.player.score += 10;
                scene.enemiesKilled += 1;
                break;
