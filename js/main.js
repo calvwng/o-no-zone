@@ -1014,7 +1014,7 @@ window.onload = function() {
 		update: function() {
 			this.scoreDisplay.text = "Ozone Recovered: " + this.player.score;
 			for(var i=0; i<this.turrets.childNodes.length; i++){
-          		if(this.turrets.childNodes[i].cost < this.player.score){
+          		if(this.turrets.childNodes[i].cost <= this.player.score){
           			this.turrets.childNodes[i].moveable = true;
           			
           		}else{
