@@ -62,6 +62,9 @@ window.onload = function() {
        Game.instance.soundPowerUp = soundManager.createSound({
          url: 'res/sounds/power-up.mp3'
        });
+       Game.instance.soundDamage = soundManager.createSound({
+         url: 'res/sounds/damage.mp3'
+       });       
        console.log("Sounds preloaded!");                    
      }
    });
@@ -278,6 +281,7 @@ window.onload = function() {
 	   },
 
       getHurt: function(damage) {
+         Game.instance.soundDamage.play();
          this.vulnerable = false;
          this.health -= damage;
          // Fade out and in to denote damage and temporary invlunerability
