@@ -76,7 +76,7 @@ window.onload = function() {
    game.keybind(83, 'down');  // S
    game.keybind(68, 'right'); // D
     game.keybind(17, 'a');     // CTRL
-   game.keybind(16, 'b');     // SHIFT IN	
+   game.keybind(80, 'b');     // SHIFT IN	
 
 	// Starts when game is loaded
 	game.onload = function() {
