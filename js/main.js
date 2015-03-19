@@ -581,10 +581,12 @@ window.onload = function() {
           var game = Game.instance;
 
           if (this.paused == true) {
+             playBgMusic();
              game.resume();
              this.removeChild(this.pauseLabel);        
           }
           else {
+             Game.instance.soundUfo.pause(); 
              game.pause();
              this.addChild(this.pauseLabel);
           }
@@ -733,10 +735,12 @@ window.onload = function() {
           var game = Game.instance;
 
           if (this.paused == true) {
+             playBgMusic();
              game.resume();
              this.removeChild(this.pauseLabel);        
           }
           else {
+             Game.instance.soundUfo.pause();
              game.pause();
              this.addChild(this.pauseLabel);
           }
@@ -909,10 +913,12 @@ window.onload = function() {
           var game = Game.instance;
 
           if (this.paused == true) {
+             playBgMusic();
              game.resume();
              this.removeChild(this.pauseLabel);        
           }
           else {
+             Game.instance.soundUfo.pause();
              game.pause();
              this.addChild(this.pauseLabel);
           }
@@ -977,16 +983,20 @@ window.onload = function() {
          this.addChild(winText1);
          this.addChild(winText2);
       }
-   }); 
+   });
 
-	// Loads the first level if Start button is clicked
-		var playGame = function(evt) {
-			var game = Game.instance;
-         game.soundUfo.play({
+   var playBgMusic = function() {
+      Game.instance.soundUfo.play({
                 onfinish: function() {
                    loopSound(Game.instance.soundUfo);
                 }
          });
+   }
+
+	// Loads the first level if Start button is clicked
+		var playGame = function(evt) {
+			var game = Game.instance;
+         playBgMusic();
 			//create a new player to be passed to level
 		    var player = new Player();
 		    player.x = 40;
