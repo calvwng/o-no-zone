@@ -1058,7 +1058,7 @@ window.onload = function() {
          restartButton.x = 345;
          restartButton.y = 325;
          this.addEventListener("touchstart", function() {
-             playGame();
+             location.reload();
          });
 
          this.backgroundColor = "black";
