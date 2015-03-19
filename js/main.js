@@ -756,7 +756,7 @@ window.onload = function() {
       }
    });
 
-     // build scene used to plasce turrets
+     // build scene used to place turrets
 	var Build = Class.create (Scene, {
 		initialize: function(playerArg, maxEnemiesArg, powerupsArg, turretsArg) {
 		    Scene.apply(this);
@@ -918,18 +918,6 @@ window.onload = function() {
           }
           this.paused = !this.paused;
       },      
-
-      touchHandler: function(evt) {
-         // If not paused && mouse is within game bounds
-         if (!this.paused && evt.x < 800 && evt.y < 600) {
-            // Spawn a bullet moving in line towards mouse
-            var bullet = new Bullet(this.player.x, this.player.y, evt.x, evt.y);
-            var radians = Math.atan2(evt.y - bullet.y, evt.x - bullet.x);
-            var degrees = (radians/Math.PI) * 180;
-            bullet.rotation = degrees + 90;     
-            this.bullets.addChild(bullet);
-         }
-      }
    });
 
 	// Game Over Screen
