@@ -203,7 +203,7 @@ window.onload = function() {
 			//check if player is dead
 			if(this.health <= 0){
 				Game.instance.soundUfo.stop();
-				Game.instance.replaceScene(new GameOverScene());
+				Game.instance.replaceScene(new GameOverScene(this.score));
 			}
          //-- Check player collision with enemy
          var enemies = Game.instance.currentScene.enemies;
@@ -1045,18 +1045,24 @@ window.onload = function() {
 
 	// Game Over Screen
    var GameOverScene = Class.create(Scene, {
-      initialize: function() {
+      initialize: function(score) {
          Scene.apply(this);
          
          var gameOverImage = new Sprite(537, 174);
          gameOverImage.image = game.assets['res/images/game_over.png'];
          gameOverImage.x = 125;
          gameOverImage.y = 100;
+
+         var finalScore = new Label("Ozone Recovered: " + score);
+         finalScore.color = "#0f0";
+         finalScore.x = 300;
+         finalScore.y = 275;
+         finalScore.font = "20px sans-serif";
          
          var restartButton = new Sprite(119, 39);
          restartButton.image = game.assets['res/images/restart_button.png'];
          restartButton.x = 345;
-         restartButton.y = 325;
+         restartButton.y = 350;
          this.addEventListener("touchstart", function() {
              location.reload();
          });
@@ -1065,6 +1071,7 @@ window.onload = function() {
  
          this.addChild(restartButton);
          this.addChild(gameOverImage);
+         this.addChild(finalScore);
       }
    }); 
 	// Winning Screen
