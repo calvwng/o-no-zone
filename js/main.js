@@ -199,7 +199,7 @@ window.onload = function() {
 			this.addEventListener('enterframe', this.update);
 		}, 
 
-		update: function() {
+		update: function(evt) {
 			//check if player is dead
 			if(this.health <= 0){
 				Game.instance.soundUfo.stop();
@@ -603,7 +603,7 @@ window.onload = function() {
 		     context.fillStyle = "Green";
 		     context.fillRect(0, 0, 120, 28);
 
-
+          // this.shootTimer = 500;
           this.shootingEnemyTimer = 3000;
           this.asteroidTimer = 5000 + Math.floor(Math.random() * 5000);
 
@@ -680,6 +680,8 @@ window.onload = function() {
 			if (this.enemiesKilled >= this.maxEnemies) {
 				Game.instance.replaceScene(new Store(this.player, this.maxEnemies, this.powerups, this.turrets));
 			}
+
+         // this.shootTimer -= evt.elapsed;      
 		},
 
       // CTRL
@@ -705,6 +707,13 @@ window.onload = function() {
       },      
 
       touchHandler: function(evt) {
+         // if (this.shootTimer > 0) {
+         //    return;
+         // }
+         // else {
+         //    this.shootTimer = 500;
+         // }
+
          // If not paused && mouse is within game bounds
          if (!this.paused && evt.x < 800 && evt.y < 600 ) {
             // Spawn a bullet moving in line towards mouse
@@ -1172,7 +1181,7 @@ window.onload = function() {
 
 		    
 
-			game.replaceScene(new Level(player, 3, AllPowerUps, AllTurrets));
+			game.replaceScene(new Level(player, 10, AllPowerUps, AllTurrets));
 		};
 
 //Story Scene class
