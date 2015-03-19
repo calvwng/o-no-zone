@@ -79,7 +79,13 @@ window.onload = function() {
 	// Start the game
 	game.start();
 
-	
+	var loopSound = function(sound) {
+      sound.play({
+         onfinish: function() {
+            loopSound(sound);
+         }
+      });
+   }
 
 	//turret class that players can move, have all other turrets inherit this class
 	var Turret = Class.create(Sprite, {
