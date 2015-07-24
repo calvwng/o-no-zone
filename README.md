@@ -1,12 +1,15 @@
 #CPE 378 Final Project
 
+http://calvwng.github.io/o-no-zone/
+(Has some issues when hosted vs downloaded and played locally)
+
 #Title:
 O-No-Zone
 
 #Team Members:
-Scotty Beauchamp
-Grant Plaster
-Calvin Wong
+Scotty Beauchamp,
+Grant Plaster,
+Calvin Wong,
 Ian Anderson
 
 #Installation Instructions
